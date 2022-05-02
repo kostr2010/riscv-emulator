@@ -1,0 +1,4 @@
+#ifndef EMULATOR_H_INCLUDED
+#define EMULATOR_H_INCLUDED
+
+#endif
