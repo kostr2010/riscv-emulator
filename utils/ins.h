@@ -5,6 +5,9 @@
 #include <cassert>
 #include <cstddef>
 #include <iostream>
+#include <string>
+
+#include "register.h"
 
 class Ins
 {
@@ -69,6 +72,7 @@ class Ins
         U_LUI = 0b0110111,
         U_AUIPC = 0b0010111,
         J = 0b1101111,
+        NOP = 0b0,
     };
 
     enum class InsMnemonic
@@ -137,10 +141,7 @@ class Ins
         : ins_raw(bits), fmt(format), mnm(mnemonic)
     {}
 
-    bool IsNOP() const
-    {
-        return ((mnm == InsMnemonic::NOP) && (fmt == InsFormat::NOP));
-    }
+    std::string ToString() const;
 
     inline InsFormat GetInsFormat() const
     {
@@ -157,126 +158,19 @@ class Ins
         return ins_raw;
     }
 
-    bool GetRs1(uint32_t* rs1) const
-    {
-        assert(rs1 != nullptr);
-
-        switch (fmt) {
-        case InsFormat::R:
-        case InsFormat::I:
-        case InsFormat::S:
-        case InsFormat::B:
-            *rs1 = (ins_raw & MASK_RS1) >> 15;
-            return true;
-        default:
-            return false;
-        }
-    }
-
-    bool GetRs2(uint32_t* rs2) const
-    {
-        assert(rs2 != nullptr);
-
-        switch (fmt) {
-        case InsFormat::R:
-        case InsFormat::S:
-        case InsFormat::B:
-            *rs2 = (ins_raw & MASK_RS2) >> 20;
-            return true;
-        default:
-            return false;
-        }
-    }
-
-    bool GetRd(uint32_t* rd) const
-    {
-        assert(rd != nullptr);
-
-        switch (fmt) {
-        case InsFormat::R:
-        case InsFormat::I:
-        case InsFormat::U:
-        case InsFormat::J:
-            *rd = (ins_raw & MASK_RD) >> 7;
-            return true;
-        default:
-            return false;
-        }
-    }
+    bool GetRs1(uint32_t* rs1) const;
+    bool GetRs2(uint32_t* rs2) const;
+    bool GetRd(uint32_t* rd) const;
+    bool GetImm(int32_t* imm) const;
 
     inline uint32_t GetImmSign() const
     {
         return ins_raw & MASK_MSB;
     }
 
-    bool GetImm(int32_t* imm) const
+    inline bool IsNOP() const
     {
-        assert(imm != nullptr);
-
-        uint32_t res = 0;
-        uint32_t sign = 0;
-
-        switch (fmt) {
-        case InsFormat::R:
-            return false;
-        case InsFormat::I: {
-            bool is_shift =
-                (mnm == InsMnemonic::SLLI || mnm == InsMnemonic::SRLI ||
-                 mnm == InsMnemonic::SRAI);
-
-            if (is_shift) {
-                res = (ins_raw & MASK_I_IMM_11_0 & (~MASK_MSB >> 1)) >> 20;
-            } else {
-                res = (ins_raw & MASK_I_IMM_11_0 & (~MASK_MSB)) >> 20;
-                sign = GetImmSign();
-            }
-
-            break;
-        }
-        case InsFormat::S: {
-            uint32_t imm_4_0 = (ins_raw & MASK_S_IMM_4_0) >> 7;
-            uint32_t imm_11_5 =
-                (ins_raw & MASK_S_IMM_11_5 & (~MASK_MSB)) >> 25;
-
-            res = (imm_11_5 << 5) | imm_4_0;
-            sign = GetImmSign();
-
-            break;
-        }
-        case InsFormat::B: {
-            uint32_t imm_11 = (ins_raw & MASK_B_IMM_11) >> 7;
-            uint32_t imm_4_1 = (ins_raw & MASK_B_IMM_4_1) >> 8;
-            uint32_t imm_10_5 = (ins_raw & MASK_B_IMM_10_5) >> 25;
-
-            res = 0b0 | (imm_4_1 << 1) | (imm_10_5 << 5) | (imm_11 << 11);
-            sign = GetImmSign();
-
-            break;
-        }
-        case InsFormat::U: {
-            res = ins_raw & MASK_U_IMM_31_12 & (~MASK_MSB);
-            sign = GetImmSign();
-
-            break;
-        }
-        case InsFormat::J: {
-            uint32_t imm_19_12 = (ins_raw & MASK_J_IMM_19_12) >> 12;
-            uint32_t imm_11 = (ins_raw & MASK_J_IMM_11) >> 20;
-            uint32_t imm_10_1 = (ins_raw & MASK_J_IMM_10_1) >> 21;
-
-            res = 0b0 | (imm_10_1 << 1) | (imm_11 << 11) | (imm_19_12 << 12);
-            sign = GetImmSign();
-
-            break;
-        }
-        default:
-            return false;
-        }
-
-        // convert to computer's encoding
-        *imm = sign ? (~res + 1) : res;
-
-        return true;
+        return (mnm == InsMnemonic::NOP) && (fmt == InsFormat::NOP);
     }
 
     static inline Ins MakeIns_NOP()
@@ -530,6 +424,9 @@ class Ins
     {
         // [funct7][rs2][rs1][funct3][rd][opcode]
         // [     7][  5][  5][     3][ 5][     7]
+        assert(rd < Register::REGISTERS_COUNT);
+        assert(rs1 < Register::REGISTERS_COUNT);
+        assert(rs2 < Register::REGISTERS_COUNT);
 
         uint32_t ins = 0;
         ins = InsSetValueMask(ins, InsOpcode::R, MASK_OPCODE, 0);
@@ -549,6 +446,8 @@ class Ins
         // [       12][  5][     3][ 5][     7]
         assert(opcode == InsOpcode::I_ARITHMETIC ||
                opcode == InsOpcode::I_LOAD || opcode == InsOpcode::I_JALR);
+        assert(rd < Register::REGISTERS_COUNT);
+        assert(rs1 < Register::REGISTERS_COUNT);
 
         int8_t sign = (imm < 0) ? 1 : 0;
         imm = abs(imm);
@@ -569,6 +468,9 @@ class Ins
     {
         // [imm[11:5]][rs2][rs1][funct3][imm[4:0]][opcode]
         // [        7][  5][  5][     3][       5][     7]
+        assert(rs1 < Register::REGISTERS_COUNT);
+        assert(rs2 < Register::REGISTERS_COUNT);
+
         int8_t sign = (imm < 0) ? 1 : 0;
         imm = abs(imm);
 
@@ -592,6 +494,9 @@ class Ins
     {
         // [imm[12|10:5]][rs2][rs1][funct3][imm[4:1|11]][opcode]
         // [           7][  5][  5][     3][          5][     7]
+        assert(rs1 < Register::REGISTERS_COUNT);
+        assert(rs2 < Register::REGISTERS_COUNT);
+
         int8_t sign = (imm < 0) ? 1 : 0;
         imm = abs(imm);
 
@@ -619,6 +524,7 @@ class Ins
         // [imm[31:12]][rd][opcode]
         // [        20][ 5][     7]
         assert(opcode == InsOpcode::U_AUIPC || opcode == InsOpcode::U_LUI);
+        assert(rd < Register::REGISTERS_COUNT);
 
         int8_t sign = (imm < 0) ? 1 : 0;
         imm = abs(imm);
@@ -638,6 +544,8 @@ class Ins
     {
         // [imm[20|10:1|11|19:12]][rd][opcode]
         // [                   20][ 5][     7]
+        assert(rd < Register::REGISTERS_COUNT);
+
         int8_t sign = (imm < 0) ? 1 : 0;
         imm = abs(imm);
 

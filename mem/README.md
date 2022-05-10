@@ -2,7 +2,7 @@
 
 ## `tests/`
 
-tests folder. run `make tests_modules` to build these tests
+tests folder. run `make tests_mem` to build these tests
 
 ## `mem.*`
 
