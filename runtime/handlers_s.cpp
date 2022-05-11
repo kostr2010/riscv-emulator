@@ -25,21 +25,15 @@ bool Interpreter::HandleInsOperands_S()
 
 bool Interpreter::HandleIns_SB()
 {
-    std::cout << "hanlde " << curr_ins_->ToString() << "\n";
-
     return true;
 }
 
 bool Interpreter::HandleIns_SH()
 {
-    std::cout << "hanlde " << curr_ins_->ToString() << "\n";
-
     return true;
 }
 
 bool Interpreter::HandleIns_SW()
 {
-    std::cout << "hanlde " << curr_ins_->ToString() << "\n";
-
     return true;
 }

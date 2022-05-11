@@ -25,27 +25,24 @@ bool Interpreter::HandleInsOperands_R()
 
 bool Interpreter::HandleIns_ADD()
 {
-    std::cout << "hanlde " << curr_ins_->ToString() << "\n";
-
-    registers_[rd_] = registers_[rs1_] + registers_[rs2_];
+    const auto result = RegGetVal(rs1_) + RegGetVal(rs2_);
+    RegSetVal(rd_, result);
 
     return true;
 }
 
 bool Interpreter::HandleIns_SUB()
 {
-    std::cout << "hanlde " << curr_ins_->ToString() << "\n";
-
-    registers_[rd_] = registers_[rs1_] - registers_[rs2_];
+    const auto result = RegGetVal(rs1_) - RegGetVal(rs2_);
+    RegSetVal(rd_, result);
 
     return true;
 }
 
 bool Interpreter::HandleIns_SLL()
 {
-    std::cout << "hanlde " << curr_ins_->ToString() << "\n";
-
-    registers_[rd_] = registers_[rs1_] << registers_[rs2_];
+    const auto result = RegGetVal(rs1_) << RegGetVal(rs2_);
+    RegSetVal(rd_, result);
 
     return true;
 }
@@ -53,12 +50,8 @@ bool Interpreter::HandleIns_SLL()
 // maybe wrong handler
 bool Interpreter::HandleIns_SLT()
 {
-    std::cout << "hanlde " << curr_ins_->ToString() << "\n";
-
-    registers_[rd_] = static_cast<int32_t>(registers_[rs1_]) <
-                              static_cast<int32_t>(registers_[rs2_])
-                          ? 1
-                          : 0;
+    const auto result = (RegGetVal(rs1_) < RegGetVal(rs2_)) ? 1 : 0;
+    RegSetVal(rd_, result);
 
     return true;
 }
@@ -66,57 +59,59 @@ bool Interpreter::HandleIns_SLT()
 // maybe wrong handler
 bool Interpreter::HandleIns_SLTU()
 {
-    std::cout << "hanlde " << curr_ins_->ToString() << "\n";
-
-    registers_[rd_] = registers_[rs1_] < registers_[rs2_] ? 1 : 0;
+    const auto result = (static_cast<uint32_t>(RegGetVal(rs1_)) <
+                         static_cast<uint32_t>(RegGetVal(rs2_)))
+                            ? 1
+                            : 0;
+    RegSetVal(rd_, result);
 
     return true;
 }
 
 bool Interpreter::HandleIns_XOR()
 {
-    std::cout << "hanlde " << curr_ins_->ToString() << "\n";
-
-    registers_[rd_] = registers_[rs1_] ^ registers_[rs2_];
+    const auto result = RegGetVal(rs1_) ^ RegGetVal(rs2_);
+    RegSetVal(rd_, result);
 
     return true;
 }
 
 bool Interpreter::HandleIns_SRL()
 {
-    std::cout << "hanlde " << curr_ins_->ToString() << "\n";
+    const auto result = static_cast<uint32_t>(RegGetVal(rs1_)) >>
+                        static_cast<uint32_t>(RegGetVal(rs2_));
 
-    registers_[rd_] = registers_[rs1_] >> registers_[rs2_];
+    RegSetVal(rd_, result);
 
     return true;
 }
 
 bool Interpreter::HandleIns_SRA()
 {
-    std::cout << "hanlde " << curr_ins_->ToString() << "\n";
+    const auto sign = rs1_ & Ins::MASK_MSB;
 
-    int sign_bit = rs1_ & Ins::MASK_MSB;
-    registers_[rd_] = registers_[rs1_] >> registers_[rs2_];
-    if (sign_bit)
-        registers_[rd_] |= Ins::MASK_MSB;
+    auto result = RegGetVal(rs1_) >> RegGetVal(rs2_);
+    if (sign) {
+        result |= Ins::MASK_MSB;
+    }
+
+    RegSetVal(rd_, result);
 
     return true;
 }
 
 bool Interpreter::HandleIns_OR()
 {
-    std::cout << "hanlde " << curr_ins_->ToString() << "\n";
-
-    registers_[rd_] = registers_[rs1_] | registers_[rs2_];
+    const auto result = RegGetVal(rs1_) | RegGetVal(rs2_);
+    RegSetVal(rd_, result);
 
     return true;
 }
 
 bool Interpreter::HandleIns_AND()
 {
-    std::cout << "hanlde " << curr_ins_->ToString() << "\n";
-
-    registers_[rd_] = registers_[rs1_] & registers_[rs2_];
+    const auto result = RegGetVal(rs1_) & RegGetVal(rs2_);
+    RegSetVal(rd_, result);
 
     return true;
 }

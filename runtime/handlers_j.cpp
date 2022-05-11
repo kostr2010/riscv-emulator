@@ -19,7 +19,10 @@ bool Interpreter::HandleInsOperands_J()
 
 bool Interpreter::HandleIns_JAL()
 {
-    std::cout << "hanlde " << curr_ins_->ToString() << "\n";
+    uint32_t next_ins = pc_ + 4;
+    RegSetVal(rd_, next_ins);
 
+    is_jump_ins = 1;
+    pc_ += imm_;
     return true;
 }

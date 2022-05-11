@@ -25,7 +25,5 @@ bool Interpreter::HandleIns_LUI()
 
 bool Interpreter::HandleIns_AUIPC()
 {
-    std::cout << "hanlde " << curr_ins_->ToString() << "\n";
-
     return true;
 }

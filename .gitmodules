@@ -1,3 +1,6 @@
 [submodule "third-party/googletest"]
 	path = third-party/googletest
 	url = git@github.com:google/googletest.git
+[submodule "third-party/riscv-arch-test"]
+	path = third-party/riscv-arch-test
+	url = git@github.com:riscv-non-isa/riscv-arch-test.git

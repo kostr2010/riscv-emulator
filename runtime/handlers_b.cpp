@@ -25,42 +25,30 @@ bool Interpreter::HandleInsOperands_B()
 
 bool Interpreter::HandleIns_BEQ()
 {
-    std::cout << "hanlde " << curr_ins_->ToString() << "\n";
-
     return true;
 }
 
 bool Interpreter::HandleIns_BNE()
 {
-    std::cout << "hanlde " << curr_ins_->ToString() << "\n";
-
     return true;
 }
 
 bool Interpreter::HandleIns_BLT()
 {
-    std::cout << "hanlde " << curr_ins_->ToString() << "\n";
-
     return true;
 }
 
 bool Interpreter::HandleIns_BGE()
 {
-    std::cout << "hanlde " << curr_ins_->ToString() << "\n";
-
     return true;
 }
 
 bool Interpreter::HandleIns_BLTU()
 {
-    std::cout << "hanlde " << curr_ins_->ToString() << "\n";
-
     return true;
 }
 
 bool Interpreter::HandleIns_BGEU()
 {
-    std::cout << "hanlde " << curr_ins_->ToString() << "\n";
-
     return true;
 }

@@ -31,17 +31,30 @@ class Interpreter
         }
     }
 
+    inline void RegSetVal(const size_t reg, const int32_t value)
+    {
+        if (reg == Register::ZERO) {
+            return;
+        }
+        registers_[reg] = value;
+    }
+
+    inline int32_t RegGetVal(const size_t reg) const
+    {
+        return registers_[reg];
+    }
+
   private:
     void UpdatePc()
     {
-        // switch (PC_SOURCE) {
-        // case BRANCH:
-        //     pc = imm_;
-        // case NONE:
-        //     pc++;
-        // }
-
-        ++pc_;
+        switch (is_jump_ins) {
+        case 1:
+            is_jump_ins = 0;
+            break;
+        case 0:
+            pc_ += 4;
+            break;
+        }
     }
 
     bool HandleIns();
@@ -62,7 +75,7 @@ class Interpreter
 
     inline size_t PCToIndex(const uint32_t pc) const
     {
-        return pc;
+        return pc / 4;
     }
 
     inline void SetError(const Err::ErrType& err_type, const std::string& msg)
@@ -82,7 +95,8 @@ class Interpreter
     uint32_t rd_{};
     uint32_t rs1_{};
     uint32_t rs2_{};
-    std::array<uint32_t, Register::REGISTERS_COUNT> registers_ = {};
+    bool is_jump_ins = 0;
+    std::array<int32_t, Register::REGISTERS_COUNT> registers_ = {};
     Err err_ = Err();
 };
 

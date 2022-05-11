@@ -25,105 +25,113 @@ bool Interpreter::HandleInsOperands_I()
 
 bool Interpreter::HandleIns_ADDI()
 {
-    std::cout << "hanlde " << curr_ins_->ToString() << "\n";
+    const auto result = RegGetVal(rs1_) + imm_;
+    RegSetVal(rd_, result);
 
     return true;
 }
 
 bool Interpreter::HandleIns_SLTI()
 {
-    std::cout << "hanlde " << curr_ins_->ToString() << "\n";
+    const auto result = RegGetVal(rs1_) < imm_ ? 1 : 0;
+    RegSetVal(rd_, result);
 
     return true;
 }
 
 bool Interpreter::HandleIns_SLTUI()
 {
-    std::cout << "hanlde " << curr_ins_->ToString() << "\n";
+    const auto result =
+        static_cast<uint32_t>(registers_[rs1_]) < static_cast<uint32_t>(imm_)
+            ? 1
+            : 0;
+
+    RegSetVal(rd_, result);
 
     return true;
 }
 
 bool Interpreter::HandleIns_XORI()
 {
-    std::cout << "hanlde " << curr_ins_->ToString() << "\n";
+    const auto result = RegGetVal(rs1_) ^ imm_;
+    RegSetVal(rd_, result);
 
     return true;
 }
 
 bool Interpreter::HandleIns_ORI()
 {
-    std::cout << "hanlde " << curr_ins_->ToString() << "\n";
+    const auto result = RegGetVal(rs1_) | imm_;
+    RegSetVal(rd_, result);
 
     return true;
 }
 
 bool Interpreter::HandleIns_ANDI()
 {
-    std::cout << "hanlde " << curr_ins_->ToString() << "\n";
+    const auto result = RegGetVal(rs1_) & imm_;
+    RegSetVal(rd_, result);
 
     return true;
 }
 
 bool Interpreter::HandleIns_SLLI()
 {
-    std::cout << "hanlde " << curr_ins_->ToString() << "\n";
+    const auto result = RegGetVal(rs1_) << imm_;
+    RegSetVal(rd_, result);
 
     return true;
 }
 
 bool Interpreter::HandleIns_SRLI()
 {
-    std::cout << "hanlde " << curr_ins_->ToString() << "\n";
+    const auto result =
+        static_cast<uint32_t>(RegGetVal(rs1_)) >> static_cast<uint32_t>(imm_);
+    RegSetVal(rd_, result);
 
     return true;
 }
 
 bool Interpreter::HandleIns_SRAI()
 {
-    std::cout << "hanlde " << curr_ins_->ToString() << "\n";
+    const auto sign = rs1_ & Ins::MASK_MSB;
+
+    auto result = RegGetVal(rs1_) >> imm_;
+    if (sign) {
+        result |= Ins::MASK_MSB;
+    }
+
+    RegSetVal(rd_, result);
 
     return true;
 }
 
 bool Interpreter::HandleIns_LB()
 {
-    std::cout << "hanlde " << curr_ins_->ToString() << "\n";
-
     return true;
 }
 
 bool Interpreter::HandleIns_LH()
 {
-    std::cout << "hanlde " << curr_ins_->ToString() << "\n";
-
     return true;
 }
 
 bool Interpreter::HandleIns_LW()
 {
-    std::cout << "hanlde " << curr_ins_->ToString() << "\n";
-
     return true;
 }
 
 bool Interpreter::HandleIns_LBU()
 {
-    std::cout << "hanlde " << curr_ins_->ToString() << "\n";
-
     return true;
 }
 
 bool Interpreter::HandleIns_LHU()
 {
-    std::cout << "hanlde " << curr_ins_->ToString() << "\n";
-
     return true;
 }
 
 bool Interpreter::HandleIns_JALR()
 {
-    std::cout << "hanlde " << curr_ins_->ToString() << "\n";
-
     return true;
 }
