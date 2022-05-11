@@ -93,7 +93,7 @@ class Ins
         // ARITHMETIC
         ADDI,
         SLTI,
-        SLTUI,
+        SLTIU,
         XORI,
         ORI,
         ANDI,
@@ -252,11 +252,11 @@ class Ins
                          InsMnemonic::SLTI);
     }
 
-    static inline Ins MakeIns_SLTUI(int32_t imm = 0, uint32_t rs1 = 0,
+    static inline Ins MakeIns_SLTIU(int32_t imm = 0, uint32_t rs1 = 0,
                                     uint32_t rd = 0)
     {
         return MakeIns_I(imm, rs1, 0b011, rd, InsOpcode::I_ARITHMETIC,
-                         InsMnemonic::SLTUI);
+                         InsMnemonic::SLTIU);
     }
 
     static inline Ins MakeIns_XORI(int32_t imm = 0, uint32_t rs1 = 0,
@@ -449,9 +449,15 @@ class Ins
         assert(rd < Register::REGISTERS_COUNT);
         assert(rs1 < Register::REGISTERS_COUNT);
 
+        std::cout << "imm " << imm << "\n";
+        std::cout << "    " << std::bitset<32>(imm) << "\n";
+
         int8_t sign = (imm < 0) ? 1 : 0;
         imm = abs(imm);
         imm |= (sign) ? 0x00000800 : 0x0;
+
+        std::cout << "imm after " << imm << "\n";
+        std::cout << "    " << std::bitset<32>(imm) << "\n";
 
         uint32_t ins = 0;
         ins = InsSetValueMask(ins, opcode, MASK_OPCODE, 0);
@@ -459,6 +465,8 @@ class Ins
         ins = InsSetValueMask(ins, funct3, MASK_I_FUNCT3, 12);
         ins = InsSetValueMask(ins, rs1, MASK_RS1, 15);
         ins = InsSetValueMask(ins, imm, MASK_I_IMM_11_0, 20);
+
+        std::cout << std::bitset<32>(ins) << "\n";
 
         return Ins(ins, InsFormat::I, mnemonic);
     }

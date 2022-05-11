@@ -28,6 +28,10 @@ bool Interpreter::HandleIns_ADDI()
     const auto result = RegGetVal(rs1_) + imm_;
     RegSetVal(rd_, result);
 
+    std::cout << std::bitset<32>(RegGetVal(rs1_)) << "\n";
+    std::cout << std::bitset<32>(imm_) << "\n";
+    std::cout << std::bitset<32>(result) << "\n";
+
     return true;
 }
 
@@ -39,7 +43,7 @@ bool Interpreter::HandleIns_SLTI()
     return true;
 }
 
-bool Interpreter::HandleIns_SLTUI()
+bool Interpreter::HandleIns_SLTIU()
 {
     const auto result =
         static_cast<uint32_t>(registers_[rs1_]) < static_cast<uint32_t>(imm_)

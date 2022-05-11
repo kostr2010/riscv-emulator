@@ -11,7 +11,7 @@
     _(AND, R, R, "AND")                                                       \
     _(ADDI, I, I_ARITHMETIC, "ADDI")                                          \
     _(SLTI, I, I_ARITHMETIC, "SLTI")                                          \
-    _(SLTUI, I, I_ARITHMETIC, "SLTUI")                                        \
+    _(SLTIU, I, I_ARITHMETIC, "SLTIU")                                        \
     _(XORI, I, I_ARITHMETIC, "XORI")                                          \
     _(ORI, I, I_ARITHMETIC, "ORI")                                            \
     _(ANDI, I, I_ARITHMETIC, "ANDI")                                          \

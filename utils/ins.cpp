@@ -102,8 +102,9 @@ bool Ins::GetImm(int32_t* imm) const
         if (is_shift) {
             res = (ins_raw & MASK_I_IMM_11_0 & (~MASK_MSB >> 1)) >> 20;
         } else {
-            res = (ins_raw & MASK_I_IMM_11_0 & (~MASK_MSB)) >> 20;
             sign = GetImmSign();
+            std::cout << std::bitset<32>(ins_raw & MASK_I_IMM_11_0) << "\n";
+            res = (ins_raw & MASK_I_IMM_11_0 & (~MASK_MSB)) >> 20;
         }
 
         break;
@@ -146,6 +147,10 @@ bool Ins::GetImm(int32_t* imm) const
     default:
         return false;
     }
+
+    std::cout << sign << "\n";
+    std::cout << std::bitset<32>(res) << "\n";
+    std::cout << (sign ? (~res + 1) : res) << '\n';
 
     // convert to computer's encoding
     *imm = sign ? (~res + 1) : res;

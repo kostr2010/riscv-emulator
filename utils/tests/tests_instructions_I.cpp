@@ -73,9 +73,9 @@ TEST(InsCreationTest_I_ARITHMETIC, SLTI)
     ASSERT_EQ(rd, 11);
 }
 
-TEST(InsCreationTest_I_ARITHMETIC, SLTUI)
+TEST(InsCreationTest_I_ARITHMETIC, SLTIU)
 {
-    Ins ins = Ins::MakeIns_SLTUI(0, 0, 0);
+    Ins ins = Ins::MakeIns_SLTIU(0, 0, 0);
     ASSERT_EQ(ins.GetInsRaw(), 0b00000000000000000011000000010011);
     int32_t imm = 0;
     uint32_t rs1 = 0;
@@ -87,7 +87,7 @@ TEST(InsCreationTest_I_ARITHMETIC, SLTUI)
     ASSERT_EQ(ins.GetRd(&rd), true);
     ASSERT_EQ(rd, 0);
 
-    ins = Ins::MakeIns_SLTUI(13, 12, 11);
+    ins = Ins::MakeIns_SLTIU(13, 12, 11);
     ASSERT_EQ(ins.GetInsRaw(), 0b00000000110101100011010110010011);
     ASSERT_EQ(ins.GetImm(&imm), true);
     ASSERT_EQ(imm, 13);
@@ -96,7 +96,7 @@ TEST(InsCreationTest_I_ARITHMETIC, SLTUI)
     ASSERT_EQ(ins.GetRd(&rd), true);
     ASSERT_EQ(rd, 11);
 
-    ins = Ins::MakeIns_SLTUI(-13, 12, 11);
+    ins = Ins::MakeIns_SLTIU(-13, 12, 11);
     ASSERT_EQ(ins.GetInsRaw(), 0b10000000110101100011010110010011);
     ASSERT_EQ(ins.GetImm(&imm), true);
     ASSERT_EQ(imm, -13);

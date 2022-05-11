@@ -6,10 +6,14 @@
     TEST(TESTS_##INS_MNEMONIC, __LINE__)                                      \
     {}
 
-#define MAKE_TEST_INST_I(INS_MNEMONIC, rd, rs1, EXPECTED, rs1_val, imm_val,   \
-                         ...)                                                 \
+#define TEST_IMM_OP(INS_MNEMONIC, rd, rs1, EXPECTED, rs1_val, imm_val, ...)   \
     TEST(TESTS_##INS_MNEMONIC, __LINE__)                                      \
-    {}
+    {                                                                         \
+        Interpreter inter({ Ins::MakeIns_##INS_MNEMONIC(imm_val, rs1, rd) }); \
+        inter.RegSetVal(rs1, rs1_val);                                        \
+        inter.Run();                                                          \
+        ASSERT_EQ(inter.RegGetVal(rd), EXPECTED);                             \
+    }
 
 #define MAKE_TEST_INST_J(INS_MNEMONIC, unknown, rd, imm_val, ...)             \
     TEST(TESTS_##INS_MNEMONIC, __LINE__)                                      \
