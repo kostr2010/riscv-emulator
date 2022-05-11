@@ -4,6 +4,7 @@
 #include "err.h"
 #include "utils/ins.h"
 #include "utils/isa.h"
+#include "utils/macros.h"
 #include "utils/register.h"
 
 #include <array>
@@ -31,7 +32,7 @@ class Interpreter
         }
     }
 
-    inline void RegSetVal(const size_t reg, const int32_t value)
+    inline void SetRegVal(const size_t reg, const int32_t value)
     {
         if (reg == Register::ZERO) {
             return;
@@ -39,7 +40,7 @@ class Interpreter
         registers_[reg] = value;
     }
 
-    inline int32_t RegGetVal(const size_t reg) const
+    inline int32_t GetRegVal(const size_t reg) const
     {
         return registers_[reg];
     }
@@ -47,9 +48,9 @@ class Interpreter
   private:
     void UpdatePc()
     {
-        switch (is_jump_ins) {
+        switch (is_jump_ins_) {
         case 1:
-            is_jump_ins = 0;
+            is_jump_ins_ = 0;
             break;
         case 0:
             pc_ += 4;
@@ -95,7 +96,7 @@ class Interpreter
     uint32_t rd_{};
     uint32_t rs1_{};
     uint32_t rs2_{};
-    bool is_jump_ins = 0;
+    bool is_jump_ins_ = 0;
     std::array<int32_t, Register::REGISTERS_COUNT> registers_ = {};
     Err err_ = Err();
 };

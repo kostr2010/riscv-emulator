@@ -25,16 +25,16 @@ bool Interpreter::HandleInsOperands_I()
 
 bool Interpreter::HandleIns_ADDI()
 {
-    const auto result = RegGetVal(rs1_) + imm_;
-    RegSetVal(rd_, result);
+    const auto result = GetRegVal(rs1_) + imm_;
+    SetRegVal(rd_, result);
 
     return true;
 }
 
 bool Interpreter::HandleIns_SLTI()
 {
-    const auto result = RegGetVal(rs1_) < imm_ ? 1 : 0;
-    RegSetVal(rd_, result);
+    const auto result = GetRegVal(rs1_) < imm_ ? 1 : 0;
+    SetRegVal(rd_, result);
 
     return true;
 }
@@ -46,39 +46,39 @@ bool Interpreter::HandleIns_SLTIU()
             ? 1
             : 0;
 
-    RegSetVal(rd_, result);
+    SetRegVal(rd_, result);
 
     return true;
 }
 
 bool Interpreter::HandleIns_XORI()
 {
-    const auto result = RegGetVal(rs1_) ^ imm_;
-    RegSetVal(rd_, result);
+    const auto result = GetRegVal(rs1_) ^ imm_;
+    SetRegVal(rd_, result);
 
     return true;
 }
 
 bool Interpreter::HandleIns_ORI()
 {
-    const auto result = RegGetVal(rs1_) | imm_;
-    RegSetVal(rd_, result);
+    const auto result = GetRegVal(rs1_) | imm_;
+    SetRegVal(rd_, result);
 
     return true;
 }
 
 bool Interpreter::HandleIns_ANDI()
 {
-    const auto result = RegGetVal(rs1_) & imm_;
-    RegSetVal(rd_, result);
+    const auto result = GetRegVal(rs1_) & imm_;
+    SetRegVal(rd_, result);
 
     return true;
 }
 
 bool Interpreter::HandleIns_SLLI()
 {
-    const auto result = RegGetVal(rs1_) << imm_;
-    RegSetVal(rd_, result);
+    const auto result = GetRegVal(rs1_) << imm_;
+    SetRegVal(rd_, result);
 
     return true;
 }
@@ -86,8 +86,8 @@ bool Interpreter::HandleIns_SLLI()
 bool Interpreter::HandleIns_SRLI()
 {
     const auto result =
-        static_cast<uint32_t>(RegGetVal(rs1_)) >> static_cast<uint32_t>(imm_);
-    RegSetVal(rd_, result);
+        static_cast<uint32_t>(GetRegVal(rs1_)) >> static_cast<uint32_t>(imm_);
+    SetRegVal(rd_, result);
 
     return true;
 }
@@ -96,42 +96,54 @@ bool Interpreter::HandleIns_SRAI()
 {
     const auto sign = rs1_ & Ins::MASK_MSB;
 
-    auto result = RegGetVal(rs1_) >> imm_;
+    auto result = GetRegVal(rs1_) >> imm_;
     if (sign) {
         result |= Ins::MASK_MSB;
     }
 
-    RegSetVal(rd_, result);
+    SetRegVal(rd_, result);
 
     return true;
 }
 
 bool Interpreter::HandleIns_LB()
 {
+    NOIMPL;
     return true;
 }
 
 bool Interpreter::HandleIns_LH()
 {
+    NOIMPL;
     return true;
 }
 
 bool Interpreter::HandleIns_LW()
 {
+    NOIMPL;
     return true;
 }
 
 bool Interpreter::HandleIns_LBU()
 {
+    NOIMPL;
     return true;
 }
 
 bool Interpreter::HandleIns_LHU()
 {
+    NOIMPL;
     return true;
 }
 
 bool Interpreter::HandleIns_JALR()
 {
+    uint32_t next_ins = pc_ + 4;
+    SetRegVal(rd_, next_ins);
+
+    is_jump_ins_ = 1;
+    uint32_t target_addr = GetRegVal(rs1_) + imm_;
+    target_addr &= 0xFFFFFFFE;
+    pc_ += target_addr;
     return true;
 }

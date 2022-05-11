@@ -25,15 +25,18 @@ bool Interpreter::HandleInsOperands_S()
 
 bool Interpreter::HandleIns_SB()
 {
+    NOIMPL;
     return true;
 }
 
 bool Interpreter::HandleIns_SH()
 {
+    NOIMPL;
     return true;
 }
 
 bool Interpreter::HandleIns_SW()
 {
+    NOIMPL;
     return true;
 }

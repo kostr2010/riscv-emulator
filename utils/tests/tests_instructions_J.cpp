@@ -22,11 +22,4 @@ TEST(InsCreationTest_J, JAL)
     ASSERT_EQ(imm, 22);
     ASSERT_EQ(ins.GetRd(&rd), true);
     ASSERT_EQ(rd, 5);
-
-    ins = Ins::MakeIns_JAL(-22, 5);
-    ASSERT_EQ(ins.GetInsRaw(), 0b10000001011000000000001011101111);
-    ASSERT_EQ(ins.GetImm(&imm), true);
-    ASSERT_EQ(imm, -22);
-    ASSERT_EQ(ins.GetRd(&rd), true);
-    ASSERT_EQ(rd, 5);
 }

@@ -19,10 +19,13 @@ bool Interpreter::HandleInsOperands_U()
 
 bool Interpreter::HandleIns_LUI()
 {
+    NOIMPL;
     return true;
 }
 
 bool Interpreter::HandleIns_AUIPC()
 {
+    const auto result = pc_ + imm_;
+    SetRegVal(rd_, result);
     return true;
 }

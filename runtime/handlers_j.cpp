@@ -20,9 +20,9 @@ bool Interpreter::HandleInsOperands_J()
 bool Interpreter::HandleIns_JAL()
 {
     uint32_t next_ins = pc_ + 4;
-    RegSetVal(rd_, next_ins);
+    SetRegVal(rd_, next_ins);
 
-    is_jump_ins = 1;
+    is_jump_ins_ = 1;
     pc_ += imm_;
     return true;
 }

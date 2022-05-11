@@ -25,24 +25,24 @@ bool Interpreter::HandleInsOperands_R()
 
 bool Interpreter::HandleIns_ADD()
 {
-    const auto result = RegGetVal(rs1_) + RegGetVal(rs2_);
-    RegSetVal(rd_, result);
+    const auto result = GetRegVal(rs1_) + GetRegVal(rs2_);
+    SetRegVal(rd_, result);
 
     return true;
 }
 
 bool Interpreter::HandleIns_SUB()
 {
-    const auto result = RegGetVal(rs1_) - RegGetVal(rs2_);
-    RegSetVal(rd_, result);
+    const auto result = GetRegVal(rs1_) - GetRegVal(rs2_);
+    SetRegVal(rd_, result);
 
     return true;
 }
 
 bool Interpreter::HandleIns_SLL()
 {
-    const auto result = RegGetVal(rs1_) << RegGetVal(rs2_);
-    RegSetVal(rd_, result);
+    const auto result = GetRegVal(rs1_) << GetRegVal(rs2_);
+    SetRegVal(rd_, result);
 
     return true;
 }
@@ -50,8 +50,8 @@ bool Interpreter::HandleIns_SLL()
 // maybe wrong handler
 bool Interpreter::HandleIns_SLT()
 {
-    const auto result = (RegGetVal(rs1_) < RegGetVal(rs2_)) ? 1 : 0;
-    RegSetVal(rd_, result);
+    const auto result = (GetRegVal(rs1_) < GetRegVal(rs2_)) ? 1 : 0;
+    SetRegVal(rd_, result);
 
     return true;
 }
@@ -59,29 +59,29 @@ bool Interpreter::HandleIns_SLT()
 // maybe wrong handler
 bool Interpreter::HandleIns_SLTU()
 {
-    const auto result = (static_cast<uint32_t>(RegGetVal(rs1_)) <
-                         static_cast<uint32_t>(RegGetVal(rs2_)))
+    const auto result = (static_cast<uint32_t>(GetRegVal(rs1_)) <
+                         static_cast<uint32_t>(GetRegVal(rs2_)))
                             ? 1
                             : 0;
-    RegSetVal(rd_, result);
+    SetRegVal(rd_, result);
 
     return true;
 }
 
 bool Interpreter::HandleIns_XOR()
 {
-    const auto result = RegGetVal(rs1_) ^ RegGetVal(rs2_);
-    RegSetVal(rd_, result);
+    const auto result = GetRegVal(rs1_) ^ GetRegVal(rs2_);
+    SetRegVal(rd_, result);
 
     return true;
 }
 
 bool Interpreter::HandleIns_SRL()
 {
-    const auto result = static_cast<uint32_t>(RegGetVal(rs1_)) >>
-                        static_cast<uint32_t>(RegGetVal(rs2_));
+    const auto result = static_cast<uint32_t>(GetRegVal(rs1_)) >>
+                        static_cast<uint32_t>(GetRegVal(rs2_));
 
-    RegSetVal(rd_, result);
+    SetRegVal(rd_, result);
 
     return true;
 }
@@ -90,28 +90,28 @@ bool Interpreter::HandleIns_SRA()
 {
     const auto sign = rs1_ & Ins::MASK_MSB;
 
-    auto result = RegGetVal(rs1_) >> RegGetVal(rs2_);
+    auto result = GetRegVal(rs1_) >> GetRegVal(rs2_);
     if (sign) {
         result |= Ins::MASK_MSB;
     }
 
-    RegSetVal(rd_, result);
+    SetRegVal(rd_, result);
 
     return true;
 }
 
 bool Interpreter::HandleIns_OR()
 {
-    const auto result = RegGetVal(rs1_) | RegGetVal(rs2_);
-    RegSetVal(rd_, result);
+    const auto result = GetRegVal(rs1_) | GetRegVal(rs2_);
+    SetRegVal(rd_, result);
 
     return true;
 }
 
 bool Interpreter::HandleIns_AND()
 {
-    const auto result = RegGetVal(rs1_) & RegGetVal(rs2_);
-    RegSetVal(rd_, result);
+    const auto result = GetRegVal(rs1_) & GetRegVal(rs2_);
+    SetRegVal(rd_, result);
 
     return true;
 }

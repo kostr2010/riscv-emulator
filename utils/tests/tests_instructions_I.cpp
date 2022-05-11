@@ -29,15 +29,6 @@ TEST(InsCreationTest_I_ARITHMETIC, ADDI)
     ASSERT_EQ(rs1, 12);
     ASSERT_EQ(ins.GetRd(&rd), true);
     ASSERT_EQ(rd, 11);
-
-    ins = Ins::MakeIns_ADDI(-13, 12, 11);
-    ASSERT_EQ(ins.GetInsRaw(), 0b10000000110101100000010110010011);
-    ASSERT_EQ(ins.GetImm(&imm), true);
-    ASSERT_EQ(imm, -13);
-    ASSERT_EQ(ins.GetRs1(&rs1), true);
-    ASSERT_EQ(rs1, 12);
-    ASSERT_EQ(ins.GetRd(&rd), true);
-    ASSERT_EQ(rd, 11);
 }
 
 TEST(InsCreationTest_I_ARITHMETIC, SLTI)
@@ -58,15 +49,6 @@ TEST(InsCreationTest_I_ARITHMETIC, SLTI)
     ASSERT_EQ(ins.GetInsRaw(), 0b00000000110101100010010110010011);
     ASSERT_EQ(ins.GetImm(&imm), true);
     ASSERT_EQ(imm, 13);
-    ASSERT_EQ(ins.GetRs1(&rs1), true);
-    ASSERT_EQ(rs1, 12);
-    ASSERT_EQ(ins.GetRd(&rd), true);
-    ASSERT_EQ(rd, 11);
-
-    ins = Ins::MakeIns_SLTI(-13, 12, 11);
-    ASSERT_EQ(ins.GetInsRaw(), 0b10000000110101100010010110010011);
-    ASSERT_EQ(ins.GetImm(&imm), true);
-    ASSERT_EQ(imm, -13);
     ASSERT_EQ(ins.GetRs1(&rs1), true);
     ASSERT_EQ(rs1, 12);
     ASSERT_EQ(ins.GetRd(&rd), true);
@@ -95,15 +77,6 @@ TEST(InsCreationTest_I_ARITHMETIC, SLTIU)
     ASSERT_EQ(rs1, 12);
     ASSERT_EQ(ins.GetRd(&rd), true);
     ASSERT_EQ(rd, 11);
-
-    ins = Ins::MakeIns_SLTIU(-13, 12, 11);
-    ASSERT_EQ(ins.GetInsRaw(), 0b10000000110101100011010110010011);
-    ASSERT_EQ(ins.GetImm(&imm), true);
-    ASSERT_EQ(imm, -13);
-    ASSERT_EQ(ins.GetRs1(&rs1), true);
-    ASSERT_EQ(rs1, 12);
-    ASSERT_EQ(ins.GetRd(&rd), true);
-    ASSERT_EQ(rd, 11);
 }
 
 TEST(InsCreationTest_I_ARITHMETIC, XORI)
@@ -124,15 +97,6 @@ TEST(InsCreationTest_I_ARITHMETIC, XORI)
     ASSERT_EQ(ins.GetInsRaw(), 0b00000000110101100100010110010011);
     ASSERT_EQ(ins.GetImm(&imm), true);
     ASSERT_EQ(imm, 13);
-    ASSERT_EQ(ins.GetRs1(&rs1), true);
-    ASSERT_EQ(rs1, 12);
-    ASSERT_EQ(ins.GetRd(&rd), true);
-    ASSERT_EQ(rd, 11);
-
-    ins = Ins::MakeIns_XORI(-13, 12, 11);
-    ASSERT_EQ(ins.GetInsRaw(), 0b10000000110101100100010110010011);
-    ASSERT_EQ(ins.GetImm(&imm), true);
-    ASSERT_EQ(imm, -13);
     ASSERT_EQ(ins.GetRs1(&rs1), true);
     ASSERT_EQ(rs1, 12);
     ASSERT_EQ(ins.GetRd(&rd), true);
@@ -161,15 +125,6 @@ TEST(InsCreationTest_I_ARITHMETIC, ORI)
     ASSERT_EQ(rs1, 12);
     ASSERT_EQ(ins.GetRd(&rd), true);
     ASSERT_EQ(rd, 11);
-
-    ins = Ins::MakeIns_ORI(-13, 12, 11);
-    ASSERT_EQ(ins.GetInsRaw(), 0b10000000110101100110010110010011);
-    ASSERT_EQ(ins.GetImm(&imm), true);
-    ASSERT_EQ(imm, -13);
-    ASSERT_EQ(ins.GetRs1(&rs1), true);
-    ASSERT_EQ(rs1, 12);
-    ASSERT_EQ(ins.GetRd(&rd), true);
-    ASSERT_EQ(rd, 11);
 }
 
 TEST(InsCreationTest_I_ARITHMETIC, ANDI)
@@ -190,15 +145,6 @@ TEST(InsCreationTest_I_ARITHMETIC, ANDI)
     ASSERT_EQ(ins.GetInsRaw(), 0b00000000110101100111010110010011);
     ASSERT_EQ(ins.GetImm(&imm), true);
     ASSERT_EQ(imm, 13);
-    ASSERT_EQ(ins.GetRs1(&rs1), true);
-    ASSERT_EQ(rs1, 12);
-    ASSERT_EQ(ins.GetRd(&rd), true);
-    ASSERT_EQ(rd, 11);
-
-    ins = Ins::MakeIns_ANDI(-13, 12, 11);
-    ASSERT_EQ(ins.GetInsRaw(), 0b10000000110101100111010110010011);
-    ASSERT_EQ(ins.GetImm(&imm), true);
-    ASSERT_EQ(imm, -13);
     ASSERT_EQ(ins.GetRs1(&rs1), true);
     ASSERT_EQ(rs1, 12);
     ASSERT_EQ(ins.GetRd(&rd), true);
@@ -301,15 +247,6 @@ TEST(InsCreationTest_I_LOAD, LB)
     ASSERT_EQ(rs1, 12);
     ASSERT_EQ(ins.GetRd(&rd), true);
     ASSERT_EQ(rd, 11);
-
-    ins = Ins::MakeIns_LB(-13, 12, 11);
-    ASSERT_EQ(ins.GetInsRaw(), 0b10000000110101100000010110000011);
-    ASSERT_EQ(ins.GetImm(&imm), true);
-    ASSERT_EQ(imm, -13);
-    ASSERT_EQ(ins.GetRs1(&rs1), true);
-    ASSERT_EQ(rs1, 12);
-    ASSERT_EQ(ins.GetRd(&rd), true);
-    ASSERT_EQ(rd, 11);
 }
 
 TEST(InsCreationTest_I_LOAD, LH)
@@ -330,15 +267,6 @@ TEST(InsCreationTest_I_LOAD, LH)
     ASSERT_EQ(ins.GetInsRaw(), 0b00000000110101100001010110000011);
     ASSERT_EQ(ins.GetImm(&imm), true);
     ASSERT_EQ(imm, 13);
-    ASSERT_EQ(ins.GetRs1(&rs1), true);
-    ASSERT_EQ(rs1, 12);
-    ASSERT_EQ(ins.GetRd(&rd), true);
-    ASSERT_EQ(rd, 11);
-
-    ins = Ins::MakeIns_LH(-13, 12, 11);
-    ASSERT_EQ(ins.GetInsRaw(), 0b10000000110101100001010110000011);
-    ASSERT_EQ(ins.GetImm(&imm), true);
-    ASSERT_EQ(imm, -13);
     ASSERT_EQ(ins.GetRs1(&rs1), true);
     ASSERT_EQ(rs1, 12);
     ASSERT_EQ(ins.GetRd(&rd), true);
@@ -367,15 +295,6 @@ TEST(InsCreationTest_I_LOAD, LW)
     ASSERT_EQ(rs1, 12);
     ASSERT_EQ(ins.GetRd(&rd), true);
     ASSERT_EQ(rd, 11);
-
-    ins = Ins::MakeIns_LW(-13, 12, 11);
-    ASSERT_EQ(ins.GetInsRaw(), 0b10000000110101100010010110000011);
-    ASSERT_EQ(ins.GetImm(&imm), true);
-    ASSERT_EQ(imm, -13);
-    ASSERT_EQ(ins.GetRs1(&rs1), true);
-    ASSERT_EQ(rs1, 12);
-    ASSERT_EQ(ins.GetRd(&rd), true);
-    ASSERT_EQ(rd, 11);
 }
 
 TEST(InsCreationTest_I_LOAD, LBU)
@@ -396,15 +315,6 @@ TEST(InsCreationTest_I_LOAD, LBU)
     ASSERT_EQ(ins.GetInsRaw(), 0b00000000110101100100010110000011);
     ASSERT_EQ(ins.GetImm(&imm), true);
     ASSERT_EQ(imm, 13);
-    ASSERT_EQ(ins.GetRs1(&rs1), true);
-    ASSERT_EQ(rs1, 12);
-    ASSERT_EQ(ins.GetRd(&rd), true);
-    ASSERT_EQ(rd, 11);
-
-    ins = Ins::MakeIns_LBU(-13, 12, 11);
-    ASSERT_EQ(ins.GetInsRaw(), 0b10000000110101100100010110000011);
-    ASSERT_EQ(ins.GetImm(&imm), true);
-    ASSERT_EQ(imm, -13);
     ASSERT_EQ(ins.GetRs1(&rs1), true);
     ASSERT_EQ(rs1, 12);
     ASSERT_EQ(ins.GetRd(&rd), true);
@@ -433,15 +343,6 @@ TEST(InsCreationTest_I_LOAD, LHU)
     ASSERT_EQ(rs1, 12);
     ASSERT_EQ(ins.GetRd(&rd), true);
     ASSERT_EQ(rd, 11);
-
-    ins = Ins::MakeIns_LHU(-13, 12, 11);
-    ASSERT_EQ(ins.GetInsRaw(), 0b10000000110101100101010110000011);
-    ASSERT_EQ(ins.GetImm(&imm), true);
-    ASSERT_EQ(imm, -13);
-    ASSERT_EQ(ins.GetRs1(&rs1), true);
-    ASSERT_EQ(rs1, 12);
-    ASSERT_EQ(ins.GetRd(&rd), true);
-    ASSERT_EQ(rd, 11);
 }
 
 // JALR
@@ -464,15 +365,6 @@ TEST(InsCreationTest_I_JALR, JALR)
     ASSERT_EQ(ins.GetInsRaw(), 0b00000000110101100000010111100111);
     ASSERT_EQ(ins.GetImm(&imm), true);
     ASSERT_EQ(imm, 13);
-    ASSERT_EQ(ins.GetRs1(&rs1), true);
-    ASSERT_EQ(rs1, 12);
-    ASSERT_EQ(ins.GetRd(&rd), true);
-    ASSERT_EQ(rd, 11);
-
-    ins = Ins::MakeIns_JALR(-13, 12, 11);
-    ASSERT_EQ(ins.GetInsRaw(), 0b10000000110101100000010111100111);
-    ASSERT_EQ(ins.GetImm(&imm), true);
-    ASSERT_EQ(imm, -13);
     ASSERT_EQ(ins.GetRs1(&rs1), true);
     ASSERT_EQ(rs1, 12);
     ASSERT_EQ(ins.GetRd(&rd), true);

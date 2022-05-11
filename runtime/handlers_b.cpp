@@ -25,30 +25,57 @@ bool Interpreter::HandleInsOperands_B()
 
 bool Interpreter::HandleIns_BEQ()
 {
+    if (GetRegVal(rs1_) == GetRegVal(rs2_)) {
+        is_jump_ins_ = 1;
+        pc_ += imm_;
+    }
+
     return true;
 }
 
 bool Interpreter::HandleIns_BNE()
 {
+    if (GetRegVal(rs1_) != GetRegVal(rs2_)) {
+        is_jump_ins_ = 1;
+        pc_ += imm_;
+    }
     return true;
 }
 
 bool Interpreter::HandleIns_BLT()
 {
+    if (GetRegVal(rs1_) < GetRegVal(rs2_)) {
+        is_jump_ins_ = 1;
+        pc_ += imm_;
+    }
     return true;
 }
 
 bool Interpreter::HandleIns_BGE()
 {
+    if (GetRegVal(rs1_) >= GetRegVal(rs2_)) {
+        is_jump_ins_ = 1;
+        pc_ += imm_;
+    }
     return true;
 }
 
 bool Interpreter::HandleIns_BLTU()
 {
+    if (static_cast<uint32_t>(GetRegVal(rs1_)) <
+        static_cast<uint32_t>(GetRegVal(rs2_))) {
+        is_jump_ins_ = 1;
+        pc_ += imm_;
+    }
     return true;
 }
 
 bool Interpreter::HandleIns_BGEU()
 {
+    if (static_cast<uint32_t>(GetRegVal(rs1_)) >=
+        static_cast<uint32_t>(GetRegVal(rs2_))) {
+        is_jump_ins_ = 1;
+        pc_ += imm_;
+    }
     return true;
 }
