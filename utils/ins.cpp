@@ -90,7 +90,6 @@ bool Ins::GetImm(int32_t* imm) const
     assert(imm != nullptr);
 
     uint32_t res = 0;
-    uint32_t sign = 0;
 
     switch (fmt) {
     case InsFormat::R:
@@ -100,21 +99,20 @@ bool Ins::GetImm(int32_t* imm) const
                          mnm == InsMnemonic::SRLI || mnm == InsMnemonic::SRAI);
 
         if (is_shift) {
-            res = (ins_raw & MASK_I_IMM_11_0 & (~MASK_MSB >> 1)) >> 20;
+            res = (ins_raw & MASK_I_IMM_4_0) >> 20;
         } else {
-            sign = GetImmSign();
-            std::cout << std::bitset<32>(ins_raw & MASK_I_IMM_11_0) << "\n";
-            res = (ins_raw & MASK_I_IMM_11_0 & (~MASK_MSB)) >> 20;
+            res = (ins_raw & MASK_I_IMM_11_0) >> 20;
+            res |= GetImmSign() ? 0xFFFFF800 : 0x0;
         }
 
         break;
     }
     case InsFormat::S: {
         uint32_t imm_4_0 = (ins_raw & MASK_S_IMM_4_0) >> 7;
-        uint32_t imm_11_5 = (ins_raw & MASK_S_IMM_11_5 & (~MASK_MSB)) >> 25;
+        uint32_t imm_11_5 = (ins_raw & MASK_S_IMM_11_5) >> 25;
 
         res = (imm_11_5 << 5) | imm_4_0;
-        sign = GetImmSign();
+        res |= GetImmSign() ? 0xFFFFF800 : 0x0;
 
         break;
     }
@@ -124,13 +122,12 @@ bool Ins::GetImm(int32_t* imm) const
         uint32_t imm_10_5 = (ins_raw & MASK_B_IMM_10_5) >> 25;
 
         res = 0b0 | (imm_4_1 << 1) | (imm_10_5 << 5) | (imm_11 << 11);
-        sign = GetImmSign();
+        res |= GetImmSign() ? 0xFFFFF000 : 0x0;
 
         break;
     }
     case InsFormat::U: {
-        res = ins_raw & MASK_U_IMM_31_12 & (~MASK_MSB);
-        sign = GetImmSign();
+        res = ins_raw & MASK_U_IMM_31_12;
 
         break;
     }
@@ -140,7 +137,7 @@ bool Ins::GetImm(int32_t* imm) const
         uint32_t imm_10_1 = (ins_raw & MASK_J_IMM_10_1) >> 21;
 
         res = 0b0 | (imm_10_1 << 1) | (imm_11 << 11) | (imm_19_12 << 12);
-        sign = GetImmSign();
+        res |= GetImmSign() ? 0xFFF00000 : 0x0;
 
         break;
     }
@@ -148,12 +145,7 @@ bool Ins::GetImm(int32_t* imm) const
         return false;
     }
 
-    std::cout << sign << "\n";
-    std::cout << std::bitset<32>(res) << "\n";
-    std::cout << (sign ? (~res + 1) : res) << '\n';
-
-    // convert to computer's encoding
-    *imm = sign ? (~res + 1) : res;
+    *imm = res;
 
     return true;
 }

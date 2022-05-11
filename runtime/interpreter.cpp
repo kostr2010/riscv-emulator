@@ -31,6 +31,5 @@ bool Interpreter::HandleIns()
 
 bool Interpreter::HandleIns_NOP()
 {
-    std::cout << "hanlde " << curr_ins_->ToString() << "\n";
     return true;
 }

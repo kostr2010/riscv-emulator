@@ -28,6 +28,7 @@ class Ins
     // I-type
     static const uint32_t MASK_I_FUNCT3 = 0x00007000;
     static const uint32_t MASK_I_IMM_11_0 = 0xFFF00000;
+    static const uint32_t MASK_I_IMM_4_0 = 0x01F00000;
 
     // S-type
     static const uint32_t MASK_S_IMM_4_0 = 0x00000F80;
@@ -449,15 +450,9 @@ class Ins
         assert(rd < Register::REGISTERS_COUNT);
         assert(rs1 < Register::REGISTERS_COUNT);
 
-        std::cout << "imm " << imm << "\n";
-        std::cout << "    " << std::bitset<32>(imm) << "\n";
-
         int8_t sign = (imm < 0) ? 1 : 0;
-        imm = abs(imm);
-        imm |= (sign) ? 0x00000800 : 0x0;
-
-        std::cout << "imm after " << imm << "\n";
-        std::cout << "    " << std::bitset<32>(imm) << "\n";
+        imm &= 0x00000FFF;
+        imm |= sign ? 0xFFFFF800 : 0x0;
 
         uint32_t ins = 0;
         ins = InsSetValueMask(ins, opcode, MASK_OPCODE, 0);
@@ -465,8 +460,6 @@ class Ins
         ins = InsSetValueMask(ins, funct3, MASK_I_FUNCT3, 12);
         ins = InsSetValueMask(ins, rs1, MASK_RS1, 15);
         ins = InsSetValueMask(ins, imm, MASK_I_IMM_11_0, 20);
-
-        std::cout << std::bitset<32>(ins) << "\n";
 
         return Ins(ins, InsFormat::I, mnemonic);
     }
@@ -480,13 +473,11 @@ class Ins
         assert(rs2 < Register::REGISTERS_COUNT);
 
         int8_t sign = (imm < 0) ? 1 : 0;
-        imm = abs(imm);
-
         uint32_t imm_4_0 = imm & 0x0000001F;
         uint32_t imm_11_5 = (imm & 0x00000FE0) >> 5;
-        imm_11_5 |= (sign ? 0x00000040 : 0x0);
-        uint32_t ins = 0;
+        imm_11_5 |= sign ? 0xFFFFFF40 : 0x0;
 
+        uint32_t ins = 0;
         ins = InsSetValueMask(ins, InsOpcode::S, MASK_OPCODE, 0);
         ins = InsSetValueMask(ins, imm_4_0, MASK_S_IMM_4_0, 7);
         ins = InsSetValueMask(ins, funct3, MASK_S_FUNCT3, 12);
@@ -506,8 +497,6 @@ class Ins
         assert(rs2 < Register::REGISTERS_COUNT);
 
         int8_t sign = (imm < 0) ? 1 : 0;
-        imm = abs(imm);
-
         uint32_t imm_4_1 = (imm & 0x0000001E) >> 1;
         uint32_t imm_10_5 = (imm & 0x000007E0) >> 5;
         uint32_t imm_11 = (imm & 0x00000800) >> 11;

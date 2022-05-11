@@ -19,7 +19,6 @@ bool Interpreter::HandleInsOperands_U()
 
 bool Interpreter::HandleIns_LUI()
 {
-    std::cout << "hanlde " << curr_ins_->ToString() << "\n";
     return true;
 }
 
