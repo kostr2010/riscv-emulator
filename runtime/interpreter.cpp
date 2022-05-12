@@ -8,12 +8,13 @@ bool Interpreter::HandleIns()
     curr_ins_ = &(program_[PCToIndex(pc_)]);
 
     switch (curr_ins_->GetInsMnemonic()) {
-#define OPLIST(instr, fmt, opcode, mnm)                                       \
-    case Ins::InsMnemonic::instr:                                             \
-        if (!HandleInsOperands_##fmt()) {                                     \
+#define OPLIST(ins, format, opcode, is_funct7, funct7, is_funct3, funct3,     \
+               mnemonic)                                                      \
+    case Ins::InsMnemonic::ins:                                               \
+        if (!HandleInsOperands_##format()) {                                  \
             return false;                                                     \
         }                                                                     \
-        Interpreter::HandleIns_##instr();                                     \
+        Interpreter::HandleIns_##ins();                                       \
         break;
         INSTRUCTION_LIST(OPLIST)
 #undef OPLIST

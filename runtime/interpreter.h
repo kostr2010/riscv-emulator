@@ -70,7 +70,8 @@ class Interpreter
         return true;
     }
 
-#define OPLIST(ins, fmt, opcode, mnm) bool HandleIns_##ins();
+#define OPLIST(ins, fmt, opcode, is_funct7, funct7, is_funct3, funct3, mnm)   \
+    bool HandleIns_##ins();
     INSTRUCTION_LIST(OPLIST)
 #undef OPLIST
 

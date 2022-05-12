@@ -5,4 +5,10 @@
 #include "runtime/interpreter.h"
 #include "utils/ins.h"
 
+class emulator
+{
+  public:
+  private:
+};
+
 #endif

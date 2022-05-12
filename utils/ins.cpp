@@ -1,5 +1,4 @@
 #include "ins.h"
-#include "isa.h"
 
 #include <map>
 #include <sstream>
@@ -8,7 +7,9 @@ std::string Ins::ToString() const
 {
 
     static std::map<InsMnemonic, std::string> mnm_to_string = {
-#define OPLIST(ins, fmt, opcode, mnm) { InsMnemonic::ins, #ins },
+#define OPLIST(ins, format, opcode, is_funct7, funct7, is_funct3, funct3,     \
+               mnemonic)                                                      \
+    { InsMnemonic::ins, #ins },
         INSTRUCTION_LIST(OPLIST)
 #undef OPLIST
     };

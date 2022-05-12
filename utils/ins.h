@@ -7,6 +7,7 @@
 #include <iostream>
 #include <string>
 
+#include "isa.h"
 #include "register.h"
 
 class Ins
@@ -20,25 +21,20 @@ class Ins
     static const uint32_t MASK_RD = 0x00000F80;
     static const uint32_t MASK_RS1 = 0x000F8000;
     static const uint32_t MASK_RS2 = 0x01F00000;
-
-    // R-type
-    static const uint32_t MASK_R_FUNCT3 = 0x00007000;
-    static const uint32_t MASK_R_FUNCT7 = 0xFE000000;
+    static const uint32_t MASK_FUNCT3 = 0x00007000;
+    static const uint32_t MASK_FUNCT7 = 0xFE000000;
 
     // I-type
-    static const uint32_t MASK_I_FUNCT3 = 0x00007000;
     static const uint32_t MASK_I_IMM_11_0 = 0xFFF00000;
     static const uint32_t MASK_I_IMM_4_0 = 0x01F00000;
 
     // S-type
     static const uint32_t MASK_S_IMM_4_0 = 0x00000F80;
-    static const uint32_t MASK_S_FUNCT3 = 0x00007000;
     static const uint32_t MASK_S_IMM_11_5 = 0xFE000000;
 
     // B-type
     static const uint32_t MASK_B_IMM_11 = 0x00000080;
     static const uint32_t MASK_B_IMM_4_1 = 0x00000F00;
-    static const uint32_t MASK_B_FUNCT3 = 0x00007000;
     static const uint32_t MASK_B_IMM_10_5 = 0x7E000000;
     static const uint32_t MASK_B_IMM_12 = 0x80000000;
 
@@ -138,9 +134,34 @@ class Ins
     {}
     ~Ins() = default;
 
-    Ins(uint32_t bits, InsFormat format, InsMnemonic mnemonic)
+    Ins(const uint32_t bits, const InsFormat format,
+        const InsMnemonic mnemonic)
         : ins_raw(bits), fmt(format), mnm(mnemonic)
     {}
+
+    Ins(const uint32_t bits) : ins_raw(bits)
+    {
+        const auto ins_opcode = bits & MASK_OPCODE;
+        const auto ins_funct7 = bits & MASK_FUNCT7;
+        const auto ins_funct3 = bits & MASK_FUNCT3;
+
+#define OPLIST(ins, format, opcode, is_funct7, funct7, is_funct3, funct3,     \
+               mnemonic)                                                      \
+    if ((opcode == ins_opcode) &&                                             \
+        (funct7 == (is_funct7 ? ins_funct7 : funct7)) &&                      \
+        (funct3 == (is_funct3 ? ins_funct3 : funct3))) {                      \
+        fmt = InsFormat::format;                                              \
+        mnm = InsMnemonic::ins;                                               \
+        return;                                                               \
+    }
+        INSTRUCTION_LIST(OPLIST)
+#undef OPLIST
+    }
+
+    static inline Ins GetInsFromRaw(const uint32_t bits)
+    {
+        return Ins(bits);
+    }
 
     std::string ToString() const;
 
@@ -432,10 +453,10 @@ class Ins
         uint32_t ins = 0;
         ins = InsSetValueMask(ins, InsOpcode::R, MASK_OPCODE, 0);
         ins = InsSetValueMask(ins, rd, MASK_RD, 7);
-        ins = InsSetValueMask(ins, funct3, MASK_R_FUNCT3, 12);
+        ins = InsSetValueMask(ins, funct3, MASK_FUNCT3, 12);
         ins = InsSetValueMask(ins, rs1, MASK_RS1, 15);
         ins = InsSetValueMask(ins, rs2, MASK_RS2, 20);
-        ins = InsSetValueMask(ins, funct7, MASK_R_FUNCT7, 25);
+        ins = InsSetValueMask(ins, funct7, MASK_FUNCT7, 25);
 
         return Ins(ins, InsFormat::R, mnemonic);
     }
@@ -457,7 +478,7 @@ class Ins
         uint32_t ins = 0;
         ins = InsSetValueMask(ins, opcode, MASK_OPCODE, 0);
         ins = InsSetValueMask(ins, rd, MASK_RD, 7);
-        ins = InsSetValueMask(ins, funct3, MASK_I_FUNCT3, 12);
+        ins = InsSetValueMask(ins, funct3, MASK_FUNCT3, 12);
         ins = InsSetValueMask(ins, rs1, MASK_RS1, 15);
         ins = InsSetValueMask(ins, imm, MASK_I_IMM_11_0, 20);
 
@@ -480,7 +501,7 @@ class Ins
         uint32_t ins = 0;
         ins = InsSetValueMask(ins, InsOpcode::S, MASK_OPCODE, 0);
         ins = InsSetValueMask(ins, imm_4_0, MASK_S_IMM_4_0, 7);
-        ins = InsSetValueMask(ins, funct3, MASK_S_FUNCT3, 12);
+        ins = InsSetValueMask(ins, funct3, MASK_FUNCT3, 12);
         ins = InsSetValueMask(ins, rs1, MASK_RS1, 15);
         ins = InsSetValueMask(ins, rs2, MASK_RS2, 20);
         ins = InsSetValueMask(ins, imm_11_5, MASK_S_IMM_11_5, 25);
@@ -506,7 +527,7 @@ class Ins
         ins = InsSetValueMask(ins, InsOpcode::B, MASK_OPCODE, 0);
         ins = InsSetValueMask(ins, imm_11, MASK_B_IMM_11, 7);
         ins = InsSetValueMask(ins, imm_4_1, MASK_B_IMM_4_1, 8);
-        ins = InsSetValueMask(ins, funct3, MASK_B_FUNCT3, 12);
+        ins = InsSetValueMask(ins, funct3, MASK_FUNCT3, 12);
         ins = InsSetValueMask(ins, rs1, MASK_RS1, 15);
         ins = InsSetValueMask(ins, rs2, MASK_RS2, 20);
         ins = InsSetValueMask(ins, imm_10_5, MASK_B_IMM_10_5, 25);

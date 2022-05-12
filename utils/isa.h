@@ -1,39 +1,39 @@
 #define INSTRUCTION_LIST(_)                                                   \
-    _(ADD, R, R, "ADD")                                                       \
-    _(SUB, R, R, "SUB")                                                       \
-    _(SLL, R, R, "SLL")                                                       \
-    _(SLT, R, R, "SLT")                                                       \
-    _(SLTU, R, R, "SLTU")                                                     \
-    _(XOR, R, R, "XOR")                                                       \
-    _(SRL, R, R, "SRL")                                                       \
-    _(SRA, R, R, "SRA")                                                       \
-    _(OR, R, R, "OR")                                                         \
-    _(AND, R, R, "AND")                                                       \
-    _(ADDI, I, I_ARITHMETIC, "ADDI")                                          \
-    _(SLTI, I, I_ARITHMETIC, "SLTI")                                          \
-    _(SLTIU, I, I_ARITHMETIC, "SLTIU")                                        \
-    _(XORI, I, I_ARITHMETIC, "XORI")                                          \
-    _(ORI, I, I_ARITHMETIC, "ORI")                                            \
-    _(ANDI, I, I_ARITHMETIC, "ANDI")                                          \
-    _(SLLI, I, I_ARITHMETIC, "SLLI")                                          \
-    _(SRLI, I, I_ARITHMETIC, "SRLI")                                          \
-    _(SRAI, I, I_ARITHMETIC, "SRAI")                                          \
-    _(LB, I, I_LOAD, "LB")                                                    \
-    _(LH, I, I_LOAD, "LH")                                                    \
-    _(LW, I, I_LOAD, "LW")                                                    \
-    _(LBU, I, I_LOAD, "LBU")                                                  \
-    _(LHU, I, I_LOAD, "LHU")                                                  \
-    _(JALR, I, I_JALR, "JALR")                                                \
-    _(SB, S, S, "SB")                                                         \
-    _(SH, S, S, "SH")                                                         \
-    _(SW, S, S, "SW")                                                         \
-    _(BEQ, B, B, "BEQ")                                                       \
-    _(BNE, B, B, "BNE")                                                       \
-    _(BLT, B, B, "BLT")                                                       \
-    _(BGE, B, B, "BGE")                                                       \
-    _(BLTU, B, B, "BLTU")                                                     \
-    _(BGEU, B, B, "BGEU")                                                     \
-    _(LUI, U, U_LUI, "LUI")                                                   \
-    _(AUIPC, U, U_AUIPC, "AUIPC")                                             \
-    _(JAL, J, J, "JAL")                                                       \
-    _(NOP, NOP, NOP, "NOP")
+    _(ADD, R, R, true, 0b0000000, true, 0b000, "ADD")                         \
+    _(SUB, R, R, true, 0b0100000, true, 0b000, "SUB")                         \
+    _(SLL, R, R, true, 0b0000000, true, 0b001, "SLL")                         \
+    _(SLT, R, R, true, 0b0000000, true, 0b010, "SLT")                         \
+    _(SLTU, R, R, true, 0b0000000, true, 0b011, "SLTU")                       \
+    _(XOR, R, R, true, 0b0000000, true, 0b100, "XOR")                         \
+    _(SRL, R, R, true, 0b0000000, true, 0b101, "SRL")                         \
+    _(SRA, R, R, true, 0b0100000, true, 0b101, "SRA")                         \
+    _(OR, R, R, true, 0b0000000, true, 0b110, "OR")                           \
+    _(AND, R, R, true, 0b0000000, true, 0b111, "AND")                         \
+    _(ADDI, I, I_ARITHMETIC, false, 0b0000000, true, 0b000, "ADDI")           \
+    _(SLTI, I, I_ARITHMETIC, false, 0b0000000, true, 0b010, "SLTI")           \
+    _(SLTIU, I, I_ARITHMETIC, false, 0b0000000, true, 0b011, "SLTIU")         \
+    _(XORI, I, I_ARITHMETIC, false, 0b0000000, true, 0b100, "XORI")           \
+    _(ORI, I, I_ARITHMETIC, false, 0b0000000, true, 0b110, "ORI")             \
+    _(ANDI, I, I_ARITHMETIC, false, 0b0000000, true, 0b111, "ANDI")           \
+    _(SLLI, I, I_ARITHMETIC, false, 0b0000000, true, 0b001, "SLLI")           \
+    _(SRLI, I, I_ARITHMETIC, false, 0b0000000, true, 0b101, "SRLI")           \
+    _(SRAI, I, I_ARITHMETIC, false, 0b0000000, true, 0b101, "SRAI")           \
+    _(LB, I, I_LOAD, false, 0b0000000, true, 0b000, "LB")                     \
+    _(LH, I, I_LOAD, false, 0b0000000, true, 0b001, "LH")                     \
+    _(LW, I, I_LOAD, false, 0b0000000, true, 0b010, "LW")                     \
+    _(LBU, I, I_LOAD, false, 0b0000000, true, 0b100, "LBU")                   \
+    _(LHU, I, I_LOAD, false, 0b0000000, true, 0b101, "LHU")                   \
+    _(JALR, I, I_JALR, false, 0b0000000, true, 0b000, "JALR")                 \
+    _(SB, S, S, false, 0b0000000, true, 0b000, "SB")                          \
+    _(SH, S, S, false, 0b0000000, true, 0b001, "SH")                          \
+    _(SW, S, S, false, 0b0000000, true, 0b010, "SW")                          \
+    _(BEQ, B, B, false, 0b0000000, true, 0b000, "BEQ")                        \
+    _(BNE, B, B, false, 0b0000000, true, 0b001, "BNE")                        \
+    _(BLT, B, B, false, 0b0000000, true, 0b100, "BLT")                        \
+    _(BGE, B, B, false, 0b0000000, true, 0b101, "BGE")                        \
+    _(BLTU, B, B, false, 0b0000000, true, 0b110, "BLTU")                      \
+    _(BGEU, B, B, false, 0b0000000, true, 0b111, "BGEU")                      \
+    _(LUI, U, U_LUI, false, 0b0000000, false, 0b000, "LUI")                   \
+    _(AUIPC, U, U_AUIPC, false, 0b0000000, false, 0b000, "AUIPC")             \
+    _(JAL, J, J, false, 0b0000000, false, 0b000, "JAL")                       \
+    _(NOP, NOP, NOP, false, 0b0000000, false, 0b000, "NOP")
