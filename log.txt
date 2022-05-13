@@ -1,0 +1,49 @@
+[  1%] Building CXX object modules/CMakeFiles/modules.dir/mem.cpp.o
+[  2%] Building CXX object utils/CMakeFiles/utils.dir/ins.cpp.o
+[  3%] Building CXX object mem/CMakeFiles/mem.dir/mem.cpp.o
+[  4%] Linking CXX shared library libmodules.so
+[  4%] Built target modules
+[  5%] Building CXX object modules/CMakeFiles/tests_modules.dir/tests/tests_modules.cpp.o
+[  6%] Linking CXX shared library libmem.so
+[  6%] Built target mem
+[  7%] Building CXX object mem/CMakeFiles/tests_mem.dir/tests/tests_mem.cpp.o
+[  8%] Linking CXX shared library libutils.so
+[  8%] Built target utils
+Scanning dependencies of target emulate
+Scanning dependencies of target tests
+[  9%] Building CXX object CMakeFiles/tests.dir/tests/tests.cpp.o
+[  9%] Building CXX object CMakeFiles/emulate.dir/emulator.cpp.o
+[ 10%] Building CXX object utils/CMakeFiles/tests_utils.dir/tests/tests_utils.cpp.o
+[ 11%] Building CXX object CMakeFiles/tests.dir/tests/tests_common.cpp.o
+[ 12%] Building CXX object utils/CMakeFiles/tests_utils.dir/tests/tests_instructions_R.cpp.o
+Scanning dependencies of target tests_interpreter
+[ 13%] Building CXX object runtime/CMakeFiles/tests_interpreter.dir/tests/tests_interpreter.cpp.o
+[ 14%] Linking CXX executable emulate
+[ 15%] Linking CXX executable tests_modules
+[ 15%] Built target emulate
+[ 16%] Building CXX object runtime/CMakeFiles/tests_interpreter.dir/sltu-01.cpp.o
+[ 16%] Built target tests_modules
+[ 17%] Building CXX object runtime/CMakeFiles/tests_interpreter.dir/sll-01.cpp.o
+[ 18%] Linking CXX executable tests_mem
+[ 18%] Built target tests_mem
+[ 19%] Building CXX object runtime/CMakeFiles/tests_interpreter.dir/or-01.cpp.o
+[ 20%] Building CXX object runtime/CMakeFiles/tests_interpreter.dir/lw-align-01.cpp.o
+[ 21%] Building CXX object runtime/CMakeFiles/tests_interpreter.dir/sw-align-01.cpp.o
+[ 22%] Building CXX object runtime/CMakeFiles/tests_interpreter.dir/sb-align-01.cpp.o
+[ 23%] Linking CXX executable tests
+[ 23%] Built target tests
+[ 24%] Building CXX object runtime/CMakeFiles/tests_interpreter.dir/bge-01.cpp.o
+[ 25%] Building CXX object utils/CMakeFiles/tests_utils.dir/tests/tests_instructions_I.cpp.o
+[ 26%] Building CXX object runtime/CMakeFiles/tests_interpreter.dir/srai-01.cpp.o
+[ 27%] Building CXX object runtime/CMakeFiles/tests_interpreter.dir/lh-align-01.cpp.o
+[ 28%] Building CXX object runtime/CMakeFiles/tests_interpreter.dir/jal-01.cpp.o
+[ 29%] Building CXX object runtime/CMakeFiles/tests_interpreter.dir/sub-01.cpp.o
+[ 30%] Building CXX object utils/CMakeFiles/tests_utils.dir/tests/tests_instructions_S.cpp.o
+[ 31%] Building CXX object runtime/CMakeFiles/tests_interpreter.dir/xor-01.cpp.o
+[ 32%] Building CXX object runtime/CMakeFiles/tests_interpreter.dir/addi-01.cpp.o
+[ 33%] Building CXX object runtime/CMakeFiles/tests_interpreter.dir/bgeu-01.cpp.o
+[ 34%] Building CXX object runtime/CMakeFiles/tests_interpreter.dir/sra-01.cpp.o
+[ 35%] Building CXX object utils/CMakeFiles/tests_utils.dir/tests/tests_instructions_B.cpp.o
+[ 36%] Building CXX object runtime/CMakeFiles/tests_interpreter.dir/srli-01.cpp.o
+[ 37%] Building CXX object utils/CMakeFiles/tests_utils.dir/tests/tests_instructions_U.cpp.o
+[ 38%] Building CXX object runtime/CMakeFiles/tests_interpreter.dir/lbu-align-01.cpp.o

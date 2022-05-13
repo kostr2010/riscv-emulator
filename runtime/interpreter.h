@@ -2,17 +2,26 @@
 #define INTERPRETER_H_INCLUDED
 
 #include "err.h"
+#include "mem/memory_interface.h"
 #include "utils/ins.h"
 #include "utils/isa.h"
 #include "utils/macros.h"
-#include "utils/register.h"
 
 #include <array>
+#include <type_traits>
 #include <vector>
 
-class Interpreter
+template <class MemManager>
+class Interpreter : public MemManager
 {
+    static_assert(std::is_base_of<MemoryInterface, MemManager>::value == true);
+
   public:
+    Interpreter()
+    {
+        // init
+    }
+
     Interpreter(const std::vector<Ins>& program) : program_(program)
     {
         if (!program.empty()) {
@@ -32,32 +41,8 @@ class Interpreter
         }
     }
 
-    inline void SetRegVal(const size_t reg, const int32_t value)
-    {
-        if (reg == Register::ZERO) {
-            return;
-        }
-        registers_[reg] = value;
-    }
-
-    inline int32_t GetRegVal(const size_t reg) const
-    {
-        return registers_[reg];
-    }
-
   private:
-    void UpdatePc()
-    {
-        switch (is_jump_ins_) {
-        case 1:
-            is_jump_ins_ = 0;
-            break;
-        case 0:
-            pc_ += 4;
-            break;
-        }
-    }
-
+    void UpdatePc();
     bool HandleIns();
     bool HandleInsOperands_R();
     bool HandleInsOperands_I();
@@ -65,10 +50,7 @@ class Interpreter
     bool HandleInsOperands_B();
     bool HandleInsOperands_U();
     bool HandleInsOperands_J();
-    inline bool HandleInsOperands_NOP()
-    {
-        return true;
-    }
+    bool HandleInsOperands_NOP();
 
 #define OPLIST(ins, fmt, opcode, is_funct7, funct7, is_funct3, funct3, mnm)   \
     bool HandleIns_##ins();
@@ -90,6 +72,7 @@ class Interpreter
         std::cout << err_.ToString() << "\n";
     }
 
+    // interpreter_state_
     uint32_t pc_{};
     std::vector<Ins> program_ = {};
     Ins* curr_ins_ = nullptr;
@@ -98,8 +81,16 @@ class Interpreter
     uint32_t rs1_{};
     uint32_t rs2_{};
     bool is_jump_ins_ = 0;
-    std::array<int32_t, Register::REGISTERS_COUNT> registers_ = {};
     Err err_ = Err();
 };
+
+#include "handlers_b.hpp"
+#include "handlers_i.hpp"
+#include "handlers_j.hpp"
+#include "handlers_nop.hpp"
+#include "handlers_r.hpp"
+#include "handlers_s.hpp"
+#include "handlers_u.hpp"
+#include "interpreter.hpp"
 
 #endif

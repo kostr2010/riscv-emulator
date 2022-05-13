@@ -20,7 +20,7 @@ target_include_directories(emulate PRIVATE ${PROJECT_SOURCE_DIR})
 target_link_libraries(emulate utils)
 target_link_libraries(emulate modules)
 target_link_libraries(emulate mem)
-target_link_libraries(emulate runtime)
+#target_link_libraries(emulate runtime)
 
 set(TEST_FOLDER ${CMAKE_CURRENT_SOURCE_DIR}/tests)
 
@@ -30,5 +30,5 @@ set(TESTS
     )
 
 add_executable(tests ${TESTS})
-target_link_libraries(tests utils modules mem runtime ${GTEST_LIBRARIES} pthread)
+target_link_libraries(tests utils modules mem ${GTEST_LIBRARIES} pthread)
 target_include_directories(tests PRIVATE ${PROJECT_SOURCE_DIR})

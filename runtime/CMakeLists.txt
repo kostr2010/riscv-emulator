@@ -2,17 +2,17 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Werror -Wextra -g")
 
 find_package (Python3 COMPONENTS Interpreter Development)
 
-add_library(runtime SHARED 
-            interpreter.cpp
-            handlers_b.cpp
-            handlers_i.cpp
-            handlers_j.cpp
-            handlers_r.cpp
-            handlers_s.cpp
-            handlers_u.cpp
-            )
-target_link_libraries(runtime mem utils ${GTEST_LIBRARIES} pthread)
-target_include_directories(runtime PRIVATE ${PROJECT_SOURCE_DIR})
+#add_library(runtime SHARED 
+#            interpreter.cpp
+#            handlers_b.cpp
+#            handlers_i.cpp
+#            handlers_j.cpp
+#            handlers_r.cpp
+#            handlers_s.cpp
+#            handlers_u.cpp
+#            )
+#target_link_libraries(runtime mem utils ${GTEST_LIBRARIES} pthread)
+#target_include_directories(runtime PRIVATE ${PROJECT_SOURCE_DIR})
 
 set(TEST_FOLDER ${CMAKE_CURRENT_SOURCE_DIR}/tests)
 set(GEN_TESTS_PY ${TEST_FOLDER}/gen_tests.py)
@@ -68,12 +68,14 @@ foreach(INS IN LISTS TESTS_I)
                        )
 endforeach()
 
-set(TESTS_RUNTIME ${TEST_FOLDER}/tests_interpreter.cpp)
+set(TESTS_RUNTIME 
+    ${TEST_FOLDER}/tests_interpreter.cpp
+)
 
 foreach(INS IN LISTS TESTS_I)
     list(APPEND TESTS_RUNTIME ${TESTS_I_DIR_DST}/${INS}.cpp)
 endforeach()
 
 add_executable(tests_interpreter ${TESTS_RUNTIME})
-target_link_libraries(tests_interpreter runtime utils mem ${GTEST_LIBRARIES} pthread)
+target_link_libraries(tests_interpreter utils mem ${GTEST_LIBRARIES} pthread)
 target_include_directories(tests_interpreter PRIVATE ${PROJECT_SOURCE_DIR})

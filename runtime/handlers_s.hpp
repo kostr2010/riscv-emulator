@@ -1,6 +1,7 @@
 #include "interpreter.h"
 
-bool Interpreter::HandleInsOperands_S()
+template <class MemManager>
+bool Interpreter<MemManager>::HandleInsOperands_S()
 {
     if (!curr_ins_->GetImm(&imm_)) {
         SetError(Err::ErrType::INVALID_INS_FORMAT,
@@ -23,19 +24,22 @@ bool Interpreter::HandleInsOperands_S()
     return true;
 }
 
-bool Interpreter::HandleIns_SB()
+template <class MemManager>
+bool Interpreter<MemManager>::HandleIns_SB()
 {
     NOIMPL;
     return true;
 }
 
-bool Interpreter::HandleIns_SH()
+template <class MemManager>
+bool Interpreter<MemManager>::HandleIns_SH()
 {
     NOIMPL;
     return true;
 }
 
-bool Interpreter::HandleIns_SW()
+template <class MemManager>
+bool Interpreter<MemManager>::HandleIns_SW()
 {
     NOIMPL;
     return true;

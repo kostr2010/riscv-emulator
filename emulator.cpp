@@ -4,9 +4,5 @@
 
 int main()
 {
-    std::vector<Ins> program;
-
-    Interpreter interpreter(program);
-
     return 0;
 }

@@ -8,7 +8,6 @@
 #include <string>
 
 #include "isa.h"
-#include "register.h"
 
 class Ins
 {
@@ -131,13 +130,15 @@ class Ins
     };
 
     Ins() : ins_raw(0), fmt(InsFormat::NOP), mnm(InsMnemonic::NOP)
-    {}
+    {
+    }
     ~Ins() = default;
 
     Ins(const uint32_t bits, const InsFormat format,
         const InsMnemonic mnemonic)
         : ins_raw(bits), fmt(format), mnm(mnemonic)
-    {}
+    {
+    }
 
     Ins(const uint32_t bits) : ins_raw(bits)
     {
@@ -446,9 +447,6 @@ class Ins
     {
         // [funct7][rs2][rs1][funct3][rd][opcode]
         // [     7][  5][  5][     3][ 5][     7]
-        assert(rd < Register::REGISTERS_COUNT);
-        assert(rs1 < Register::REGISTERS_COUNT);
-        assert(rs2 < Register::REGISTERS_COUNT);
 
         uint32_t ins = 0;
         ins = InsSetValueMask(ins, InsOpcode::R, MASK_OPCODE, 0);
@@ -468,8 +466,6 @@ class Ins
         // [       12][  5][     3][ 5][     7]
         assert(opcode == InsOpcode::I_ARITHMETIC ||
                opcode == InsOpcode::I_LOAD || opcode == InsOpcode::I_JALR);
-        assert(rd < Register::REGISTERS_COUNT);
-        assert(rs1 < Register::REGISTERS_COUNT);
 
         int8_t sign = (imm < 0) ? 1 : 0;
         imm &= 0x00000FFF;
@@ -490,8 +486,6 @@ class Ins
     {
         // [imm[11:5]][rs2][rs1][funct3][imm[4:0]][opcode]
         // [        7][  5][  5][     3][       5][     7]
-        assert(rs1 < Register::REGISTERS_COUNT);
-        assert(rs2 < Register::REGISTERS_COUNT);
 
         int8_t sign = (imm < 0) ? 1 : 0;
         uint32_t imm_4_0 = imm & 0x0000001F;
@@ -514,8 +508,6 @@ class Ins
     {
         // [imm[12|10:5]][rs2][rs1][funct3][imm[4:1|11]][opcode]
         // [           7][  5][  5][     3][          5][     7]
-        assert(rs1 < Register::REGISTERS_COUNT);
-        assert(rs2 < Register::REGISTERS_COUNT);
 
         int8_t sign = (imm < 0) ? 1 : 0;
         uint32_t imm_4_1 = (imm & 0x0000001E) >> 1;
@@ -542,7 +534,6 @@ class Ins
         // [imm[31:12]][rd][opcode]
         // [        20][ 5][     7]
         assert(opcode == InsOpcode::U_AUIPC || opcode == InsOpcode::U_LUI);
-        assert(rd < Register::REGISTERS_COUNT);
 
         int8_t sign = (imm < 0) ? 1 : 0;
         imm = abs(imm);
@@ -562,7 +553,6 @@ class Ins
     {
         // [imm[20|10:1|11|19:12]][rd][opcode]
         // [                   20][ 5][     7]
-        assert(rd < Register::REGISTERS_COUNT);
 
         int8_t sign = (imm < 0) ? 1 : 0;
         imm = abs(imm);

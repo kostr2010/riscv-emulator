@@ -5,6 +5,7 @@ lines_out = []
 lines_out.append(
     "#include \"runtime/tests/macros.h\"\n"
     "#include \"runtime/interpreter.h\"\n"
+    "#include \"mem/mem.h\"\n"
     "#include <gtest/gtest.h>\n\n")
 
 assert(len(sys.argv) == 3)

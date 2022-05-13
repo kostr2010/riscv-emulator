@@ -3,7 +3,21 @@
 
 #include <iostream>
 
-bool Interpreter::HandleIns()
+template <class MemManager>
+void Interpreter<MemManager>::UpdatePc()
+{
+    switch (is_jump_ins_) {
+    case 1:
+        is_jump_ins_ = 0;
+        break;
+    case 0:
+        pc_ += 4;
+        break;
+    }
+}
+
+template <class MemManager>
+bool Interpreter<MemManager>::HandleIns()
 {
     curr_ins_ = &(program_[PCToIndex(pc_)]);
 
@@ -14,7 +28,7 @@ bool Interpreter::HandleIns()
         if (!HandleInsOperands_##format()) {                                  \
             return false;                                                     \
         }                                                                     \
-        Interpreter::HandleIns_##ins();                                       \
+        HandleIns_##ins();                                                    \
         break;
         INSTRUCTION_LIST(OPLIST)
 #undef OPLIST
@@ -27,10 +41,5 @@ bool Interpreter::HandleIns()
         return false;
     }
 
-    return true;
-}
-
-bool Interpreter::HandleIns_NOP()
-{
     return true;
 }

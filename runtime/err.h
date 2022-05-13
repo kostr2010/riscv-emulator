@@ -19,13 +19,9 @@ struct Err
     Err(const ErrType& err_type, const std::string& msg, const size_t pc,
         const Ins& ins)
         : err_type_(err_type), msg_(msg), pc_(pc), ins_(ins)
-    {}
-
-    Err(const Err& err)
-        : err_type_(err.err_type_), msg_(err.msg_), pc_(err.pc_),
-          ins_(err.ins_)
-    {}
-
+    {
+    }
+    Err(const Err& err) = default;
     Err() = default;
 
     std::string ToString() const

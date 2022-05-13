@@ -1,6 +1,7 @@
 #include "emulator.h"
 #include <gtest/gtest.h>
 
+/*
 TEST(ZERO_TEST, ZERO)
 {
     static const std::vector<Ins> program = {
@@ -12,4 +13,4 @@ TEST(ZERO_TEST, ZERO)
     Interpreter interpreter(program);
 
     interpreter.Run();
-}
+} */
