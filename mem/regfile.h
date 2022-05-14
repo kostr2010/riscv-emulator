@@ -44,6 +44,8 @@ struct RegFile
 
     enum CSRRegister
     {
+        M_SCRATCH,
+        S_SCRATCH,
         CSR_REGISTERS_COUNT,
     };
 
