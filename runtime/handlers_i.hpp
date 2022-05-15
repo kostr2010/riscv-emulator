@@ -119,35 +119,70 @@ bool Interpreter<MemManager>::HandleIns_SRAI()
 template <class MemManager>
 bool Interpreter<MemManager>::HandleIns_LB()
 {
-    NOIMPL;
+    assert(rd_ != RegFile::IntRegister::ZERO);
+    uint32_t adr = MemManager::GetIntReg(rs1_) + imm_;
+    uint32_t buf = 0;
+    MemManager::Read(adr, &buf, 1);
+
+    // sign extend
+    const uint32_t MASK_7_BIT = 0x00000080;
+    buf |= buf & MASK_7_BIT == 1 ? 0xFFFFFF00 : 0x0;
+
+    MemManager::SetIntReg(rd_, buf);
+
     return true;
 }
 
 template <class MemManager>
 bool Interpreter<MemManager>::HandleIns_LH()
 {
-    NOIMPL;
+    assert(rd_ != RegFile::IntRegister::ZERO);
+    uint32_t adr = MemManager::GetIntReg(rs1_) + imm_;
+    uint32_t buf = 0;
+    MemManager::Read(adr, &buf, 2);
+
+    // sign extend
+    const uint32_t MASK_15_BIT = 0x00008000;
+    buf |= buf & MASK_15_BIT == 1 ? 0xFFFF0000 : 0x0;
+
+    MemManager::SetIntReg(rd_, buf);
+
     return true;
 }
 
 template <class MemManager>
 bool Interpreter<MemManager>::HandleIns_LW()
 {
-    NOIMPL;
+    assert(rd_ != RegFile::IntRegister::ZERO);
+    uint32_t adr = MemManager::GetIntReg(rs1_) + imm_;
+    uint32_t buf = 0;
+    MemManager::Read(adr, &buf, 4);
+    MemManager::SetIntReg(rd_, buf);
+
     return true;
 }
 
 template <class MemManager>
 bool Interpreter<MemManager>::HandleIns_LBU()
 {
-    NOIMPL;
+    assert(rd_ != RegFile::IntRegister::ZERO);
+    uint32_t adr = MemManager::GetIntReg(rs1_) + imm_;
+    uint32_t buf = 0;
+    MemManager::Read(adr, &buf, 1);
+    MemManager::SetIntReg(rd_, buf);
+
     return true;
 }
 
 template <class MemManager>
 bool Interpreter<MemManager>::HandleIns_LHU()
 {
-    NOIMPL;
+    assert(rd_ != RegFile::IntRegister::ZERO);
+    uint32_t adr = MemManager::GetIntReg(rs1_) + imm_;
+    uint32_t buf = 0;
+    MemManager::Read(adr, &buf, 2);
+    MemManager::SetIntReg(rd_, buf);
+
     return true;
 }
 

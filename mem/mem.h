@@ -19,7 +19,6 @@ constexpr uint32_t REGION2_ZONE_END = 0x03f00000;
 constexpr uint32_t PM_SPACE_END = 0x04000000;
 
 // TODO: tests memory (read-write-read)
-// TODO: API for LOAD / STORE
 
 // TODO: attributes / exceptions
 // TODO: run simulation

@@ -80,60 +80,63 @@ uint32_t ReadElf::LoadElf32IntoMemory()
 
 // TODO mmap munmap
 // First page allocation and cheking of other pages available
-void ReadElf::InitMemory()
-{
-    memory_ = reinterpret_cast<uint8_t*>(
-        mmap(NULL, // Need our own realization of mmap
-             Size, // Need to choose our own max Size to mmap
-             PROT_NONE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0));
 
-    if (memory_ == MAP_FAILED) {
-        throw ElfLoadException("Failed to init memory");
-    }
-    if (munmap(memory_ + PageSize,
-               Size - PageSize)) { // Need our own realization of munmap
-        throw ElfLoadException("Failed to init memory"); // Checked that enough
-                                                         // memory is available
-    } // Leave only one page of memory to save base ptr
-}
+// void ReadElf::InitMemory() {
+//     memory_ = reinterpret_cast<uint8_t*>(mmap(NULL,             // Need our
+//     own realization of mmap
+//                                               Size,             // Need to
+//                                               choose our own max Size to
+//                                               mmap PROT_NONE, MAP_PRIVATE |
+//                                               MAP_ANONYMOUS, -1, 0));
 
-uint32_t ReadElf::AlignUp(uint32_t vaddr)
-{
-    return ((vaddr + (PageSize - 1)) / PageSize) * PageSize;
-}
+//     if (memory_ == MAP_FAILED) {
+//         throw ElfLoadException("Failed to init memory");
+//     }
+//     if (munmap(memory_ + PageSize, Size - PageSize)) {          // Need our
+//     own realization of munmap
+//         throw ElfLoadException("Failed to init memory");        // Checked
+//         that enough memory is available
+//     }                                                           // Leave
+//     only one page of memory to save base ptr
+// }
 
-// Get the begginning of page
-uint32_t ReadElf::AlignDown(uint32_t vaddr)
-{
-    return vaddr - vaddr % PageSize;
-}
+// uint32_t ReadElf::AlignUp(uint32_t vaddr) {
+//     return ((vaddr + (PageSize - 1)) / PageSize) * PageSize;
+// }
+
+// // Get the begginning of page
+// uint32_t ReadElf::AlignDown(uint32_t vaddr){
+//     return vaddr - vaddr % PageSize;
+// }
 
 // TODO mmap
-uint8_t* ReadElf::AllocateMemory(uint32_t vaddr, size_t length, int prot)
-{
-    auto aligned_vaddr =
-        AlignDown(vaddr); // addr in mmap % 4096 == 0 else fault
-    length = AlignUp(length + vaddr -
-                     aligned_vaddr); //  len in mmap % 4096 == 0 else fault
-    if (Size - length < vaddr) {
-        throw ElfLoadException("failed to allocate " + std::to_string(length) +
-                               " bytes starting at " + std::to_string(vaddr));
-    }
+// uint8_t* ReadElf::AllocateMemory(uint32_t vaddr, size_t length, int prot)
+// {
+//     auto aligned_vaddr =
+//         AlignDown(vaddr); // addr in mmap % 4096 == 0 else fault
+//     length = AlignUp(length + vaddr -
+//                      aligned_vaddr); //  len in mmap % 4096 == 0 else fault
+//     if (Size - length < vaddr) {
+//         throw ElfLoadException("failed to allocate " +
+//         std::to_string(length) +
+//                                " bytes starting at " +
+//                                std::to_string(vaddr));
+//     }
 
-    void* paddr = mmap(Translate(aligned_vaddr), length,
-                       prot | PROT_WRITE, // Need our own realization of mmap
-                       MAP_FIXED | MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-    if (paddr == MAP_FAILED) {
-        throw ElfLoadException("failed to allocate memory");
-    }
-    allocated_chunks_.emplace_back(paddr, length);
+//     void* paddr = mmap(Translate(aligned_vaddr), length,
+//                        prot | PROT_WRITE, // Need our own realization of
+//                        mmap MAP_FIXED | MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+//     if (paddr == MAP_FAILED) {
+//         throw ElfLoadException("failed to allocate memory");
+//     }
+//     allocated_chunks_.emplace_back(paddr, length);
 
-    return reinterpret_cast<uint8_t*>(paddr) + (vaddr - aligned_vaddr);
-}
+//     return reinterpret_cast<uint8_t*>(paddr) + (vaddr - aligned_vaddr);
+// }
 
-// TODO memset
-void* ReadElf::Memset(uint32_t vaddr, int fill_byte, size_t n_bytes)
-{
-    return memset(Translate(vaddr), fill_byte,
-                  n_bytes); // Need our own realization of memset
-}
+// // TODO memset
+// void* ReadElf::Memset(uint32_t vaddr, int fill_byte, size_t n_bytes)
+// {
+//     return memset(Translate(vaddr), fill_byte,
+//                   n_bytes); // Need our own realization of memset
+// }

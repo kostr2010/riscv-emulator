@@ -27,20 +27,29 @@ bool Interpreter<MemManager>::HandleInsOperands_S()
 template <class MemManager>
 bool Interpreter<MemManager>::HandleIns_SB()
 {
-    NOIMPL;
+    uint32_t adr = MemManager::GetIntReg(rs1_) + imm_;
+    uint32_t buf = MemManager::GetIntReg(rs2_) & 0x000000FF;
+    MemManager::Write(adr, &buf, 1);
+
     return true;
 }
 
 template <class MemManager>
 bool Interpreter<MemManager>::HandleIns_SH()
 {
-    NOIMPL;
+    uint32_t adr = MemManager::GetIntReg(rs1_) + imm_;
+    uint32_t buf = MemManager::GetIntReg(rs2_) & 0x0000FFFF;
+    MemManager::Write(adr, &buf, 2);
+
     return true;
 }
 
 template <class MemManager>
 bool Interpreter<MemManager>::HandleIns_SW()
 {
-    NOIMPL;
+    uint32_t adr = MemManager::GetIntReg(rs1_) + imm_;
+    uint32_t buf = MemManager::GetIntReg(rs2_);
+    MemManager::Write(adr, &buf, 4);
+
     return true;
 }

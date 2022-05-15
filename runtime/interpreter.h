@@ -22,7 +22,7 @@ class Interpreter : public MemManager
     {
         // init
     }
-
+    // LOVE YA
     Interpreter(const std::vector<Ins>& program) : program_(program)
     {
         if (!program.empty()) {
