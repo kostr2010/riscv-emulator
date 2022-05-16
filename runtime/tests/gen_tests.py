@@ -38,8 +38,16 @@ with open(sys.argv[1], 'r') as file:
 
             line_mangled = "TEST_RR_OP(" + ', '.join(splited_line) + ")\n"
             lines_out.append(line_mangled)
-        elif (line.startswith("S")):  # S type test
-            continue
+        elif (line.startswith("TEST_LOAD")):  # load instructions
+            regexp = re.compile(r'(?<=\().*(?=\))')
+            matched = regexp.search(line)
+            splited_line = matched.group().split(",")
+            splited_line[7] = splited_line[7].upper()
+            splited_line[3] = splited_line[3][1:]
+            splited_line[4] = splited_line[4][1:]
+
+            line_mangled = "TEST_LOAD(" + ', '.join(splited_line) + ")\n"
+            lines_out.append(line_mangled)
         elif (line.startswith("U")):  # U type test
             continue
 
