@@ -8,9 +8,11 @@
 class Emulator
 {
   public:
+    Emulator() = default;
+
   private:
+    MemoryManager mem_;
     Interpreter<MemoryManager> interpreter_;
-    // MemoryManager mem_;
     // std::vector<Ins> program_;
 };
 

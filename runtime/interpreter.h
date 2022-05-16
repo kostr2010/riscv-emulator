@@ -8,9 +8,9 @@
 #include "utils/macros.h"
 
 #include <array>
+#include <string>
 #include <type_traits>
 #include <vector>
-#include <string>
 
 template <class MemManager>
 class Interpreter : public MemManager
@@ -32,16 +32,16 @@ class Interpreter : public MemManager
 
     void Run()
     {
-        //We need path to elf
+        // We need path to elf
         std::string path = "PathToELf";
         int fd = open(path, O_RDONLY)
 
-        program_loader.SetFD(fd);
+                     program_loader.SetFD(fd);
         uint32_t entrypoint = program_loader.LoadElf32IntoMemory();
-        SetPC(entrypoint);
-        for (;;) {                  // Loop till last command
-        uint32_t rawInstruction = GetRawInstr();
-        // HandleRawIns(rawInstruction);
+        pc_ = entrypoint;
+        for (;;) { // Loop till last command
+            uint32_t rawInstruction = GetRawInstr();
+            // HandleRawIns(rawInstruction);
         }
 
         // Not updated during jumps, make change pc in instructions
@@ -86,14 +86,13 @@ class Interpreter : public MemManager
         std::cout << err_.ToString() << "\n";
     }
 
-    void SetPC(uint32_t entrypoint) {
-        pc_ = entrypoint;
-    }
-
-    uint32_t GetRawInstr() {
+    uint32_t GetRawInstr()
+    {
         ASSERT(pc_ % 4 == 0);
         return *reinterpret_cast<uint32_t*>(program_loader.Translate(pc_));
     }
+
+    utils::ReadElf program_loader{};
 
     // interpreter_state_
     uint32_t pc_{};
@@ -105,7 +104,6 @@ class Interpreter : public MemManager
     uint32_t rs2_{};
     bool is_jump_ins_ = 0;
     Err err_ = Err();
-    utils::ReadElf program_loader{};
 };
 
 #include "handlers_b.hpp"

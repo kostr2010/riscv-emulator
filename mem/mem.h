@@ -9,7 +9,10 @@
 #include <cctype>
 #include <cstdint>
 #include <cstring>
+#include <iostream>
+#include <stdio.h>
 #include <stdlib.h>
+#include <sys/mman.h>
 #include <unordered_map>
 
 constexpr uint32_t REGION1_ZONE_BEGIN = 0x00100000;
@@ -82,9 +85,10 @@ class MemoryManager : public MemoryInterface
 
         Uint32_t_Ptr(uint32_t ptr)
         {
-            raw = ptr;
+            raw_ = ptr;
         }
 
+        /*
         inline void ZeroOffset()
         {
             raw &= ~MASK_OFFSET;
@@ -94,46 +98,61 @@ class MemoryManager : public MemoryInterface
         {
             ZeroOffset();
             raw += MASK_OFFSET + 1;
-        }
+        } */
 
         inline uint32_t PTIdxOuter() const
         {
-            return raw & MASK_PT_OUTER >> 22;
+            return (raw_ & MASK_PT_OUTER) >> 22;
         }
 
         inline uint32_t PTIdxInner() const
         {
-            return raw & MASK_PT_INNER >> 12;
+            return (raw_ & MASK_PT_INNER) >> 12;
         }
 
         inline uint32_t Offset() const
         {
-            return raw & MASK_OFFSET;
+            return raw_ & MASK_OFFSET;
         }
 
-        // private:
-        uint32_t raw;
+        uint32_t raw_;
     };
 
   public:
     MemoryManager()
     {
-        mem_ = (uint8_t*)calloc(N_PAGES * PAGE_SIZE, sizeof(uint8_t));
+        // mem_ = (uint8_t*)calloc(N_PAGES * PAGE_SIZE, sizeof(uint8_t));
+        mem_ = new uint8_t[N_PAGES * PAGE_SIZE];
+        // errno = 0;
+        // mem_ = reinterpret_cast<uint8_t*>(mmap(NULL, N_PAGES * PAGE_SIZE,
+        //                                        PROT_READ | PROT_WRITE,
+        //                                        MAP_ANONYMOUS, 0, 0));
+        // std::cout << errno << "\n";
+        // assert(mem_ != MAP_FAILED);
+
         assert(mem_ != nullptr);
 
         InitPageTable();
+    }
+
+    ~MemoryManager()
+    {
+        // assert(munmap(mem_, N_PAGES * PAGE_SIZE) == 0);
+        // free(mem_);
+        delete[] mem_;
+        mem_ = nullptr;
     }
 
     bool Read(const uint32_t vaddr, uint8_t* buf,
               uint32_t count) const override
     {
         assert(buf != nullptr);
-        // assert(vaddr + count < MEM_END);
+        assert(vaddr >= USER_SPACE_BEGIN && vaddr + count < VM_SPACE_END);
 
         // TODO: check access rights
 
         Uint32_t_Ptr ptr(vaddr);
-        uint32_t buf_offset = 0;
+        /* uint32_t buf_offset = 0;
         uint32_t bytes_to_read = 0;
         while (count) {
             bytes_to_read = (count > PAGE_SIZE - ptr.Offset())
@@ -145,7 +164,9 @@ class MemoryManager : public MemoryInterface
 
             buf_offset += bytes_to_read;
             count -= bytes_to_read;
-        }
+        } */
+
+        memcpy(buf, VadrToPadr(ptr), count);
 
         return true;
     }
@@ -153,12 +174,12 @@ class MemoryManager : public MemoryInterface
     bool Write(const uint32_t vaddr, uint8_t* buf, uint32_t count) override
     {
         assert(buf != nullptr);
-        // assert(vaddr + count < MEM_END);
+        assert(vaddr >= USER_SPACE_BEGIN && vaddr + count < VM_SPACE_END);
 
         // TODO: check access rights
 
         Uint32_t_Ptr ptr(vaddr);
-        uint32_t buf_offset = 0;
+        /* uint32_t buf_offset = 0;
         uint32_t bytes_to_write = 0;
         while (count) {
             bytes_to_write = (count > PAGE_SIZE - ptr.Offset())
@@ -170,7 +191,8 @@ class MemoryManager : public MemoryInterface
 
             buf_offset += bytes_to_write;
             count -= bytes_to_write;
-        }
+        } */
+        memcpy(VadrToPadr(ptr), buf, count);
 
         return true;
     }
@@ -215,9 +237,15 @@ class MemoryManager : public MemoryInterface
         return regfile_.pc_;
     }
 
+    inline uint8_t* GetRawMem()
+    {
+        return mem_;
+    }
+
   private:
     void InitPageTable()
     {
+        assert(mem_ != nullptr);
         // Region1 memory mapping
         for (size_t i = 0; i < MAX_ENTRIES_PT; ++i) {
             pt_[0][i] = mem_ + REGION1_ZONE_BEGIN + PAGE_SIZE * i;
@@ -234,16 +262,23 @@ class MemoryManager : public MemoryInterface
             }
         }
 
+        // printf("Addr is %p\n", (void*)(pt_[1010][0] - mem_));
+
         assert(pt_.size() == N_ENTRIES_PT_OUTER);
     }
 
     inline uint8_t* VadrToPadr(const Uint32_t_Ptr& vadr_ptr) const
     {
-        assert(vadr_ptr.raw >= USER_SPACE_BEGIN &&
-               vadr_ptr.raw < VM_SPACE_END);
+        assert(vadr_ptr.raw_ >= USER_SPACE_BEGIN &&
+               vadr_ptr.raw_ < VM_SPACE_END);
         assert((vadr_ptr.PTIdxOuter() == 0) |
                (vadr_ptr.PTIdxOuter() >= PT_OUTER_IDX_UPPER_REGION_START));
 
+        // // std::cout << "Raw addres " << vadr_ptr.raw_ << "\n";
+        // // std::cout << "Outer index " << vadr_ptr.PTIdxOuter() << " Inner
+        // index "
+        //           << vadr_ptr.PTIdxInner() << " Offset is "
+        //           << vadr_ptr.Offset() << "\n";
         return pt_.at(vadr_ptr.PTIdxOuter()).at(vadr_ptr.PTIdxInner()) +
                vadr_ptr.Offset();
     }
