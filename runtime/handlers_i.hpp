@@ -36,7 +36,7 @@ bool Interpreter<MemManager>::HandleIns_ADDI()
 template <class MemManager>
 bool Interpreter<MemManager>::HandleIns_SLTI()
 {
-    const auto result = MemManager::GetIntReg(rs1_) < imm_ ? 1 : 0;
+    const auto result = (MemManager::GetIntReg(rs1_) < imm_ ? 1 : 0);
     MemManager::SetIntReg(rd_, result);
 
     return true;
@@ -45,10 +45,10 @@ bool Interpreter<MemManager>::HandleIns_SLTI()
 template <class MemManager>
 bool Interpreter<MemManager>::HandleIns_SLTIU()
 {
-    const auto result = static_cast<uint32_t>(MemManager::GetIntReg(rs1_)) <
-                                static_cast<uint32_t>(imm_)
-                            ? 1
-                            : 0;
+    const auto result = ((static_cast<uint32_t>(MemManager::GetIntReg(rs1_)) <
+                          static_cast<uint32_t>(imm_))
+                             ? 1
+                             : 0);
 
     MemManager::SetIntReg(rd_, result);
 
@@ -121,15 +121,12 @@ bool Interpreter<MemManager>::HandleIns_LB()
 {
     assert(rd_ != RegFile::IntRegister::ZERO);
     uint32_t adr = MemManager::GetIntReg(rs1_) + imm_;
-    uint32_t buf = 0;
-    MemManager::Read(adr, &buf, 1);
+    uint8_t buf = 0;
+    MemManager::Read(adr, reinterpret_cast<uint8_t*>(&buf), 1);
+    uint32_t buf_extended = 0 | buf;
+    buf_extended |= (((buf_extended & 0x00000080) != 0) ? 0xFFFFFF00 : 0x0);
 
-    // sign extend
-    const uint32_t MASK_7_BIT = 0x00000080;
-    buf |= buf & MASK_7_BIT == 1 ? 0xFFFFFF00 : 0x0;
-
-    MemManager::SetIntReg(rd_, buf);
-
+    MemManager::SetIntReg(rd_, buf_extended);
     return true;
 }
 
@@ -138,14 +135,17 @@ bool Interpreter<MemManager>::HandleIns_LH()
 {
     assert(rd_ != RegFile::IntRegister::ZERO);
     uint32_t adr = MemManager::GetIntReg(rs1_) + imm_;
-    uint32_t buf = 0;
-    MemManager::Read(adr, &buf, 2);
+    uint16_t buf = 0;
+    MemManager::Read(adr, reinterpret_cast<uint8_t*>(&buf), 2);
+    uint32_t MASK_15_BIT = 0x00000080;
+    if (is_host_big_endian != is_elf_big_endian) {
+        buf = ReverseBits16(buf);
+        MASK_15_BIT = 0x00008000;
+    }
+    uint32_t buf_extended = 0 | buf;
+    buf_extended |= (((buf_extended & MASK_15_BIT) != 0) ? 0xFFFF0000 : 0x0);
 
-    // sign extend
-    const uint32_t MASK_15_BIT = 0x00008000;
-    buf |= buf & MASK_15_BIT == 1 ? 0xFFFF0000 : 0x0;
-
-    MemManager::SetIntReg(rd_, buf);
+    MemManager::SetIntReg(rd_, buf_extended);
 
     return true;
 }
@@ -156,7 +156,10 @@ bool Interpreter<MemManager>::HandleIns_LW()
     assert(rd_ != RegFile::IntRegister::ZERO);
     uint32_t adr = MemManager::GetIntReg(rs1_) + imm_;
     uint32_t buf = 0;
-    MemManager::Read(adr, &buf, 4);
+    MemManager::Read(adr, reinterpret_cast<uint8_t*>(&buf), 4);
+    if (is_host_big_endian != is_elf_big_endian) {
+        buf = ReverseBits32(buf);
+    }
     MemManager::SetIntReg(rd_, buf);
 
     return true;
@@ -168,7 +171,7 @@ bool Interpreter<MemManager>::HandleIns_LBU()
     assert(rd_ != RegFile::IntRegister::ZERO);
     uint32_t adr = MemManager::GetIntReg(rs1_) + imm_;
     uint32_t buf = 0;
-    MemManager::Read(adr, &buf, 1);
+    MemManager::Read(adr, reinterpret_cast<uint8_t*>(&buf), 1);
     MemManager::SetIntReg(rd_, buf);
 
     return true;
@@ -179,9 +182,14 @@ bool Interpreter<MemManager>::HandleIns_LHU()
 {
     assert(rd_ != RegFile::IntRegister::ZERO);
     uint32_t adr = MemManager::GetIntReg(rs1_) + imm_;
-    uint32_t buf = 0;
-    MemManager::Read(adr, &buf, 2);
-    MemManager::SetIntReg(rd_, buf);
+    uint16_t buf = 0;
+    MemManager::Read(adr, reinterpret_cast<uint8_t*>(&buf), 2);
+    if (is_host_big_endian != is_elf_big_endian) {
+        buf = ReverseBits16(buf);
+    }
+    uint32_t buf_extended = 0 | buf;
+
+    MemManager::SetIntReg(rd_, buf_extended);
 
     return true;
 }

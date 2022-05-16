@@ -88,17 +88,16 @@ class MemoryManager : public MemoryInterface
             raw_ = ptr;
         }
 
-        /*
         inline void ZeroOffset()
         {
-            raw &= ~MASK_OFFSET;
+            raw_ &= ~MASK_OFFSET;
         }
 
         inline void NextPage()
         {
             ZeroOffset();
-            raw += MASK_OFFSET + 1;
-        } */
+            raw_ += MASK_OFFSET + 1;
+        }
 
         inline uint32_t PTIdxOuter() const
         {
@@ -121,8 +120,7 @@ class MemoryManager : public MemoryInterface
   public:
     MemoryManager()
     {
-        // mem_ = (uint8_t*)calloc(N_PAGES * PAGE_SIZE, sizeof(uint8_t));
-        mem_ = new uint8_t[N_PAGES * PAGE_SIZE];
+        mem_ = (uint8_t*)calloc(N_PAGES * PAGE_SIZE, sizeof(uint8_t));
         // errno = 0;
         // mem_ = reinterpret_cast<uint8_t*>(mmap(NULL, N_PAGES * PAGE_SIZE,
         //                                        PROT_READ | PROT_WRITE,
@@ -138,8 +136,7 @@ class MemoryManager : public MemoryInterface
     ~MemoryManager()
     {
         // assert(munmap(mem_, N_PAGES * PAGE_SIZE) == 0);
-        // free(mem_);
-        delete[] mem_;
+        free(mem_);
         mem_ = nullptr;
     }
 
@@ -152,7 +149,7 @@ class MemoryManager : public MemoryInterface
         // TODO: check access rights
 
         Uint32_t_Ptr ptr(vaddr);
-        /* uint32_t buf_offset = 0;
+        uint32_t buf_offset = 0;
         uint32_t bytes_to_read = 0;
         while (count) {
             bytes_to_read = (count > PAGE_SIZE - ptr.Offset())
@@ -164,9 +161,9 @@ class MemoryManager : public MemoryInterface
 
             buf_offset += bytes_to_read;
             count -= bytes_to_read;
-        } */
+        }
 
-        memcpy(buf, VadrToPadr(ptr), count);
+        // memcpy(buf, VadrToPadr(ptr), count);
 
         return true;
     }
@@ -179,7 +176,7 @@ class MemoryManager : public MemoryInterface
         // TODO: check access rights
 
         Uint32_t_Ptr ptr(vaddr);
-        /* uint32_t buf_offset = 0;
+        uint32_t buf_offset = 0;
         uint32_t bytes_to_write = 0;
         while (count) {
             bytes_to_write = (count > PAGE_SIZE - ptr.Offset())
@@ -191,8 +188,8 @@ class MemoryManager : public MemoryInterface
 
             buf_offset += bytes_to_write;
             count -= bytes_to_write;
-        } */
-        memcpy(VadrToPadr(ptr), buf, count);
+        }
+        // memcpy(VadrToPadr(ptr), buf, count);
 
         return true;
     }
@@ -273,12 +270,6 @@ class MemoryManager : public MemoryInterface
                vadr_ptr.raw_ < VM_SPACE_END);
         assert((vadr_ptr.PTIdxOuter() == 0) |
                (vadr_ptr.PTIdxOuter() >= PT_OUTER_IDX_UPPER_REGION_START));
-
-        // // std::cout << "Raw addres " << vadr_ptr.raw_ << "\n";
-        // // std::cout << "Outer index " << vadr_ptr.PTIdxOuter() << " Inner
-        // index "
-        //           << vadr_ptr.PTIdxInner() << " Offset is "
-        //           << vadr_ptr.Offset() << "\n";
         return pt_.at(vadr_ptr.PTIdxOuter()).at(vadr_ptr.PTIdxInner()) +
                vadr_ptr.Offset();
     }

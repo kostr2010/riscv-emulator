@@ -1,7 +1,8 @@
-#include "readelf.h"
 #include <cstring>
 #include <sys/mman.h>
 #include <unistd.h>
+
+#include "readelf.h"
 
 bool ReadElf::ValidateElfHeader(const Elf32_Ehdr& elf_header)
 {
@@ -63,17 +64,17 @@ uint32_t ReadElf::LoadElf32IntoMemory()
             prot |= PROT_EXEC;
         }
 
-        auto vaddr = p_header.p_vaddr;
-        auto mem_size = p_header.p_memsz;
-        auto file_size = p_header.p_filesz;
-        auto* paddr = AllocateMemory(vaddr, mem_size, prot);
+        // auto vaddr = p_header.p_vaddr;
+        // auto mem_size = p_header.p_memsz;
+        // auto file_size = p_header.p_filesz;
+        // auto* paddr = AllocateMemory(vaddr, mem_size, prot);
 
-        if (pread(fd_, paddr, file_size, p_header.p_offset) != file_size) {
-            throw ElfLoadException("failed to copy segment into memory");
-        }
-        if (mem_size > file_size) {
-            Memset(vaddr + file_size, 0, mem_size - file_size);
-        }
+        // if (pread(fd_, paddr, file_size, p_header.p_offset) != file_size) {
+        //     throw ElfLoadException("failed to copy segment into memory");
+        // }
+        // if (mem_size > file_size) {
+        //     Memset(vaddr + file_size, 0, mem_size - file_size);
+        // }
     }
     return elf_header.e_entry;
 }

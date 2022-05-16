@@ -23,13 +23,11 @@ class ReadElf
   public:
     explicit ReadElf()
         : fd_(-1), elf_header{}, header_was_init(false), table_was_init(false)
-    {
-    }
+    {}
 
     explicit ReadElf(int fd)
         : fd_(fd), elf_header{}, header_was_init(false), table_was_init(false)
-    {
-    }
+    {}
 
     ~ReadElf()
     {
@@ -50,15 +48,15 @@ class ReadElf
     const Elf32_Ehdr& ReadElfHeader();
     const std::vector<Elf32_Phdr>& ReadProgramHeaderTable();
     uint32_t LoadElf32IntoMemory();
-    void InitMemory();
+    // void InitMemory();
 
     static constexpr uint32_t Size = (0u - 1u); // TODO change to actual size
     static constexpr uint32_t PageSize = 4096;
 
-    uint32_t AlignUp(uint32_t vaddr);
-    uint32_t AlignDown(uint32_t vaddr);
-    uint8_t* AllocateMemory(uint32_t vaddr, size_t length, int prot);
-    void* Memset(uint32_t vaddr, int fill_byte, size_t n_bytes);
+    // uint32_t AlignUp(uint32_t vaddr);
+    // uint32_t AlignDown(uint32_t vaddr);
+    // uint8_t* AllocateMemory(uint32_t vaddr, size_t length, int prot);
+    // void* Memset(uint32_t vaddr, int fill_byte, size_t n_bytes);
 
   private:
     int fd_;
@@ -76,4 +74,4 @@ class ReadElf
     }
 };
 
-#endif // UTILS_READELF_H_INCLUDED
+#endif

@@ -28,9 +28,8 @@ template <class MemManager>
 bool Interpreter<MemManager>::HandleIns_SB()
 {
     uint32_t adr = MemManager::GetIntReg(rs1_) + imm_;
-    uint32_t buf = MemManager::GetIntReg(rs2_) & 0x000000FF;
-    MemManager::Write(adr, &buf, 1);
-
+    uint8_t buf = MemManager::GetIntReg(rs2_);
+    MemManager::Write(adr, reinterpret_cast<uint8_t*>(&buf), 1);
     return true;
 }
 
@@ -38,8 +37,11 @@ template <class MemManager>
 bool Interpreter<MemManager>::HandleIns_SH()
 {
     uint32_t adr = MemManager::GetIntReg(rs1_) + imm_;
-    uint32_t buf = MemManager::GetIntReg(rs2_) & 0x0000FFFF;
-    MemManager::Write(adr, &buf, 2);
+    uint16_t buf = MemManager::GetIntReg(rs2_);
+    if (is_host_big_endian != is_elf_big_endian) {
+        buf = ReverseBits16(buf);
+    }
+    MemManager::Write(adr, reinterpret_cast<uint8_t*>(&buf), 2);
 
     return true;
 }
@@ -47,9 +49,13 @@ bool Interpreter<MemManager>::HandleIns_SH()
 template <class MemManager>
 bool Interpreter<MemManager>::HandleIns_SW()
 {
-    uint32_t adr = MemManager::GetIntReg(rs1_) + imm_;
+    uint32_t adr = static_cast<uint32_t>(MemManager::GetIntReg(rs1_)) + imm_;
     uint32_t buf = MemManager::GetIntReg(rs2_);
-    MemManager::Write(adr, &buf, 4);
+    if (is_host_big_endian != is_elf_big_endian) {
+        buf = ReverseBits32(buf);
+    }
+
+    MemManager::Write(adr, reinterpret_cast<uint8_t*>(&buf), 4);
 
     return true;
 }

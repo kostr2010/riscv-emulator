@@ -5,15 +5,15 @@
 #include "runtime/interpreter.h"
 #include "utils/ins.h"
 
+/*
 class Emulator
 {
   public:
     Emulator() = default;
 
-  private:
-    MemoryManager mem_;
+    private:
     Interpreter<MemoryManager> interpreter_;
     // std::vector<Ins> program_;
-};
+}; */
 
 #endif
