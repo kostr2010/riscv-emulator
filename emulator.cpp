@@ -1,13 +1,22 @@
-#include "emulator.h"
+#include "mem/mem.h"
 #include "runtime/interpreter.h"
+#include "utils/ins.h"
+
+#include "utils/elfreader.h"
 #include <vector>
 
-int main()
+int main(int argc, char** argv)
 {
+    if (argc < 2) {
+        std::cout << "Usage: ./emulator <path to elf file>\n";
+        std::exit(1);
+    }
+
     Interpreter<MemoryManager> interpreter;
 
-    std::string path_to_elf = "";
-    interpreter.LoadElf(path_to_elf);
+    ElfFile elf_file(argv[1]);
+
+    interpreter.LoadElf(elf_file);
 
     interpreter.Run();
 

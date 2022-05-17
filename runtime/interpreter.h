@@ -4,6 +4,7 @@
 #include "err.h"
 #include "mem/memory_interface.h"
 #include "mem/regfile.h"
+#include "utils/elfreader.h"
 #include "utils/ins.h"
 #include "utils/isa.h"
 #include "utils/macros.h"
@@ -80,7 +81,7 @@ class Interpreter : public MemManager
         return ((uint16_t)b1 << 8) + b2;
     }
 
-    void LoadElf(const std::string& path)
+    void LoadElf(const ElfFile& elf_file)
     {
         std::cout << path;
     }
