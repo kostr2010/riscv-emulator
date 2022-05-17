@@ -1,4 +1,4 @@
-add_library(utils SHARED ins.cpp readelf.cpp)
+add_library(utils SHARED ins.cpp)
 
 set(TEST_FOLDER ${CMAKE_CURRENT_SOURCE_DIR}/tests)
 

@@ -130,15 +130,13 @@ class Ins
     };
 
     Ins() : ins_raw(0), fmt(InsFormat::NOP), mnm(InsMnemonic::NOP)
-    {
-    }
+    {}
     ~Ins() = default;
 
     Ins(const uint32_t bits, const InsFormat format,
         const InsMnemonic mnemonic)
         : ins_raw(bits), fmt(format), mnm(mnemonic)
-    {
-    }
+    {}
 
     Ins(const uint32_t bits) : ins_raw(bits)
     {

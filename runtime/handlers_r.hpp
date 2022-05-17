@@ -27,9 +27,8 @@ bool Interpreter<MemManager>::HandleInsOperands_R()
 template <class MemManager>
 bool Interpreter<MemManager>::HandleIns_ADD()
 {
-    const auto result =
-        MemManager::GetIntReg(rs1_) + MemManager::GetIntReg(rs2_);
-    MemManager::SetIntReg(rd_, result);
+    const auto result = MemManager::GetGPR(rs1_) + MemManager::GetGPR(rs2_);
+    MemManager::SetGPR(rd_, result);
 
     return true;
 }
@@ -37,9 +36,8 @@ bool Interpreter<MemManager>::HandleIns_ADD()
 template <class MemManager>
 bool Interpreter<MemManager>::HandleIns_SUB()
 {
-    const auto result =
-        MemManager::GetIntReg(rs1_) - MemManager::GetIntReg(rs2_);
-    MemManager::SetIntReg(rd_, result);
+    const auto result = MemManager::GetGPR(rs1_) - MemManager::GetGPR(rs2_);
+    MemManager::SetGPR(rd_, result);
 
     return true;
 }
@@ -47,9 +45,8 @@ bool Interpreter<MemManager>::HandleIns_SUB()
 template <class MemManager>
 bool Interpreter<MemManager>::HandleIns_SLL()
 {
-    const auto result = MemManager::GetIntReg(rs1_)
-                        << MemManager::GetIntReg(rs2_);
-    MemManager::SetIntReg(rd_, result);
+    const auto result = MemManager::GetGPR(rs1_) << MemManager::GetGPR(rs2_);
+    MemManager::SetGPR(rd_, result);
 
     return true;
 }
@@ -59,8 +56,8 @@ template <class MemManager>
 bool Interpreter<MemManager>::HandleIns_SLT()
 {
     const auto result =
-        (MemManager::GetIntReg(rs1_) < MemManager::GetIntReg(rs2_)) ? 1 : 0;
-    MemManager::SetIntReg(rd_, result);
+        (MemManager::GetGPR(rs1_) < MemManager::GetGPR(rs2_)) ? 1 : 0;
+    MemManager::SetGPR(rd_, result);
 
     return true;
 }
@@ -69,11 +66,11 @@ bool Interpreter<MemManager>::HandleIns_SLT()
 template <class MemManager>
 bool Interpreter<MemManager>::HandleIns_SLTU()
 {
-    const auto result = (static_cast<uint32_t>(MemManager::GetIntReg(rs1_)) <
-                         static_cast<uint32_t>(MemManager::GetIntReg(rs2_)))
+    const auto result = (static_cast<uint32_t>(MemManager::GetGPR(rs1_)) <
+                         static_cast<uint32_t>(MemManager::GetGPR(rs2_)))
                             ? 1
                             : 0;
-    MemManager::SetIntReg(rd_, result);
+    MemManager::SetGPR(rd_, result);
 
     return true;
 }
@@ -81,9 +78,8 @@ bool Interpreter<MemManager>::HandleIns_SLTU()
 template <class MemManager>
 bool Interpreter<MemManager>::HandleIns_XOR()
 {
-    const auto result =
-        MemManager::GetIntReg(rs1_) ^ MemManager::GetIntReg(rs2_);
-    MemManager::SetIntReg(rd_, result);
+    const auto result = MemManager::GetGPR(rs1_) ^ MemManager::GetGPR(rs2_);
+    MemManager::SetGPR(rd_, result);
 
     return true;
 }
@@ -91,10 +87,10 @@ bool Interpreter<MemManager>::HandleIns_XOR()
 template <class MemManager>
 bool Interpreter<MemManager>::HandleIns_SRL()
 {
-    const auto result = static_cast<uint32_t>(MemManager::GetIntReg(rs1_)) >>
-                        static_cast<uint32_t>(MemManager::GetIntReg(rs2_));
+    const auto result = static_cast<uint32_t>(MemManager::GetGPR(rs1_)) >>
+                        static_cast<uint32_t>(MemManager::GetGPR(rs2_));
 
-    MemManager::SetIntReg(rd_, result);
+    MemManager::SetGPR(rd_, result);
 
     return true;
 }
@@ -104,12 +100,12 @@ bool Interpreter<MemManager>::HandleIns_SRA()
 {
     const auto sign = rs1_ & Ins::MASK_MSB;
 
-    auto result = MemManager::GetIntReg(rs1_) >> MemManager::GetIntReg(rs2_);
+    auto result = MemManager::GetGPR(rs1_) >> MemManager::GetGPR(rs2_);
     if (sign) {
         result |= Ins::MASK_MSB;
     }
 
-    MemManager::SetIntReg(rd_, result);
+    MemManager::SetGPR(rd_, result);
 
     return true;
 }
@@ -117,9 +113,8 @@ bool Interpreter<MemManager>::HandleIns_SRA()
 template <class MemManager>
 bool Interpreter<MemManager>::HandleIns_OR()
 {
-    const auto result =
-        MemManager::GetIntReg(rs1_) | MemManager::GetIntReg(rs2_);
-    MemManager::SetIntReg(rd_, result);
+    const auto result = MemManager::GetGPR(rs1_) | MemManager::GetGPR(rs2_);
+    MemManager::SetGPR(rd_, result);
 
     return true;
 }
@@ -127,9 +122,8 @@ bool Interpreter<MemManager>::HandleIns_OR()
 template <class MemManager>
 bool Interpreter<MemManager>::HandleIns_AND()
 {
-    const auto result =
-        MemManager::GetIntReg(rs1_) & MemManager::GetIntReg(rs2_);
-    MemManager::SetIntReg(rd_, result);
+    const auto result = MemManager::GetGPR(rs1_) & MemManager::GetGPR(rs2_);
+    MemManager::SetGPR(rd_, result);
 
     return true;
 }

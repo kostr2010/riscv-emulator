@@ -29,6 +29,6 @@ template <class MemManager>
 bool Interpreter<MemManager>::HandleIns_AUIPC()
 {
     const auto result = pc_ + imm_;
-    MemManager::SetIntReg(rd_, result);
+    MemManager::SetGPR(rd_, result);
     return true;
 }

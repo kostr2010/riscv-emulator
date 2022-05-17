@@ -11,9 +11,9 @@
     {                                                                         \
         Interpreter<MemoryManager> interpreter(                               \
             { Ins::MakeIns_##INS_MNEMONIC(imm_val, rs1, rd) });               \
-        interpreter.SetIntReg(rs1, rs1_val);                                  \
+        interpreter.SetGPR(rs1, rs1_val);                                     \
         interpreter.Run();                                                    \
-        ASSERT_EQ(interpreter.GetIntReg(rd), EXPECTED);                       \
+        ASSERT_EQ(interpreter.GetGPR(rd), EXPECTED);                          \
     }
 
 #define MAKE_TEST_INST_J(INS_MNEMONIC, unknown, rd, imm_val, ...)             \
@@ -26,22 +26,11 @@
     {                                                                         \
         Interpreter<MemoryManager> interpreter(                               \
             { Ins::MakeIns_##INS_MNEMONIC(rs2, rs1, rd) });                   \
-        interpreter.SetIntReg(rs1, rs1_val);                                  \
-        interpreter.SetIntReg(rs2, rs2_val);                                  \
+        interpreter.SetGPR(rs1, rs1_val);                                     \
+        interpreter.SetGPR(rs2, rs2_val);                                     \
         interpreter.Run();                                                    \
-        ASSERT_EQ(interpreter.GetIntReg(rd), EXPECTED);                       \
+        ASSERT_EQ(interpreter.GetGPR(rd), EXPECTED);                          \
     }
-
-// virtual bool Read(const uint32_t vaddr, uint8_t* buf,
-//                   const uint32_t count) const = 0;
-// virtual bool Write(const uint32_t vaddr, uint8_t* buf,
-//                    const uint32_t count) = 0;
-// virtual void SetIntReg(const uint32_t reg, const int32_t value) = 0;
-// virtual int32_t GetIntReg(const uint32_t reg) const = 0;
-// virtual void SetCSRReg(const uint32_t reg, const int32_t value) = 0;
-// virtual int32_t GetCSRReg(const uint32_t reg) const = 0;
-// virtual void SetPc(const int32_t value) = 0;
-// virtual int32_t GetPc() const = 0;
 
 #define TEST_LOAD(unknown1, unknown2, unknown3, rs1, rd, imm_val, unknown4,   \
                   INS_MNEMONIC, align)                                        \
@@ -53,8 +42,8 @@
         Interpreter<MemoryManager> interpreter(                               \
             { Ins::MakeIns_SW(imm_val, reg_buf, rs1),                         \
               Ins::MakeIns_##INS_MNEMONIC(imm_val, rs1, rd) });               \
-        interpreter.SetIntReg(reg_buf, buf);                                  \
-        interpreter.SetIntReg(rs1, addr);                                     \
+        interpreter.SetGPR(reg_buf, buf);                                     \
+        interpreter.SetGPR(rs1, addr);                                        \
         if (rd == 0) {                                                        \
             EXPECT_DEATH(interpreter.Run(), ".*");                            \
             return;                                                           \
@@ -89,7 +78,7 @@
             break;                                                            \
         }                                                                     \
         }                                                                     \
-        ASSERT_EQ(interpreter.GetIntReg(rd), value);                          \
+        ASSERT_EQ(interpreter.GetGPR(rd), value);                             \
     }
 
 // TODO

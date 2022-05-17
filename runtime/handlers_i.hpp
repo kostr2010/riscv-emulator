@@ -27,8 +27,8 @@ bool Interpreter<MemManager>::HandleInsOperands_I()
 template <class MemManager>
 bool Interpreter<MemManager>::HandleIns_ADDI()
 {
-    const auto result = MemManager::GetIntReg(rs1_) + imm_;
-    MemManager::SetIntReg(rd_, result);
+    const auto result = MemManager::GetGPR(rs1_) + imm_;
+    MemManager::SetGPR(rd_, result);
 
     return true;
 }
@@ -36,8 +36,8 @@ bool Interpreter<MemManager>::HandleIns_ADDI()
 template <class MemManager>
 bool Interpreter<MemManager>::HandleIns_SLTI()
 {
-    const auto result = (MemManager::GetIntReg(rs1_) < imm_ ? 1 : 0);
-    MemManager::SetIntReg(rd_, result);
+    const auto result = (MemManager::GetGPR(rs1_) < imm_ ? 1 : 0);
+    MemManager::SetGPR(rd_, result);
 
     return true;
 }
@@ -45,12 +45,12 @@ bool Interpreter<MemManager>::HandleIns_SLTI()
 template <class MemManager>
 bool Interpreter<MemManager>::HandleIns_SLTIU()
 {
-    const auto result = ((static_cast<uint32_t>(MemManager::GetIntReg(rs1_)) <
+    const auto result = ((static_cast<uint32_t>(MemManager::GetGPR(rs1_)) <
                           static_cast<uint32_t>(imm_))
                              ? 1
                              : 0);
 
-    MemManager::SetIntReg(rd_, result);
+    MemManager::SetGPR(rd_, result);
 
     return true;
 }
@@ -58,8 +58,8 @@ bool Interpreter<MemManager>::HandleIns_SLTIU()
 template <class MemManager>
 bool Interpreter<MemManager>::HandleIns_XORI()
 {
-    const auto result = MemManager::GetIntReg(rs1_) ^ imm_;
-    MemManager::SetIntReg(rd_, result);
+    const auto result = MemManager::GetGPR(rs1_) ^ imm_;
+    MemManager::SetGPR(rd_, result);
 
     return true;
 }
@@ -67,8 +67,8 @@ bool Interpreter<MemManager>::HandleIns_XORI()
 template <class MemManager>
 bool Interpreter<MemManager>::HandleIns_ORI()
 {
-    const auto result = MemManager::GetIntReg(rs1_) | imm_;
-    MemManager::SetIntReg(rd_, result);
+    const auto result = MemManager::GetGPR(rs1_) | imm_;
+    MemManager::SetGPR(rd_, result);
 
     return true;
 }
@@ -76,8 +76,8 @@ bool Interpreter<MemManager>::HandleIns_ORI()
 template <class MemManager>
 bool Interpreter<MemManager>::HandleIns_ANDI()
 {
-    const auto result = MemManager::GetIntReg(rs1_) & imm_;
-    MemManager::SetIntReg(rd_, result);
+    const auto result = MemManager::GetGPR(rs1_) & imm_;
+    MemManager::SetGPR(rd_, result);
 
     return true;
 }
@@ -85,8 +85,8 @@ bool Interpreter<MemManager>::HandleIns_ANDI()
 template <class MemManager>
 bool Interpreter<MemManager>::HandleIns_SLLI()
 {
-    const auto result = MemManager::GetIntReg(rs1_) << imm_;
-    MemManager::SetIntReg(rd_, result);
+    const auto result = MemManager::GetGPR(rs1_) << imm_;
+    MemManager::SetGPR(rd_, result);
 
     return true;
 }
@@ -94,9 +94,9 @@ bool Interpreter<MemManager>::HandleIns_SLLI()
 template <class MemManager>
 bool Interpreter<MemManager>::HandleIns_SRLI()
 {
-    const auto result = static_cast<uint32_t>(MemManager::GetIntReg(rs1_)) >>
+    const auto result = static_cast<uint32_t>(MemManager::GetGPR(rs1_)) >>
                         static_cast<uint32_t>(imm_);
-    MemManager::SetIntReg(rd_, result);
+    MemManager::SetGPR(rd_, result);
 
     return true;
 }
@@ -106,12 +106,12 @@ bool Interpreter<MemManager>::HandleIns_SRAI()
 {
     const auto sign = rs1_ & Ins::MASK_MSB;
 
-    auto result = MemManager::GetIntReg(rs1_) >> imm_;
+    auto result = MemManager::GetGPR(rs1_) >> imm_;
     if (sign) {
         result |= Ins::MASK_MSB;
     }
 
-    MemManager::SetIntReg(rd_, result);
+    MemManager::SetGPR(rd_, result);
 
     return true;
 }
@@ -119,22 +119,22 @@ bool Interpreter<MemManager>::HandleIns_SRAI()
 template <class MemManager>
 bool Interpreter<MemManager>::HandleIns_LB()
 {
-    assert(rd_ != RegFile::IntRegister::ZERO);
-    uint32_t adr = MemManager::GetIntReg(rs1_) + imm_;
+    assert(rd_ != RegFile::GPR::ZERO);
+    uint32_t adr = MemManager::GetGPR(rs1_) + imm_;
     uint8_t buf = 0;
     MemManager::Read(adr, reinterpret_cast<uint8_t*>(&buf), 1);
     uint32_t buf_extended = 0 | buf;
     buf_extended |= (((buf_extended & 0x00000080) != 0) ? 0xFFFFFF00 : 0x0);
 
-    MemManager::SetIntReg(rd_, buf_extended);
+    MemManager::SetGPR(rd_, buf_extended);
     return true;
 }
 
 template <class MemManager>
 bool Interpreter<MemManager>::HandleIns_LH()
 {
-    assert(rd_ != RegFile::IntRegister::ZERO);
-    uint32_t adr = MemManager::GetIntReg(rs1_) + imm_;
+    assert(rd_ != RegFile::GPR::ZERO);
+    uint32_t adr = MemManager::GetGPR(rs1_) + imm_;
     uint16_t buf = 0;
     MemManager::Read(adr, reinterpret_cast<uint8_t*>(&buf), 2);
     uint32_t MASK_15_BIT = 0x00000080;
@@ -145,7 +145,7 @@ bool Interpreter<MemManager>::HandleIns_LH()
     uint32_t buf_extended = 0 | buf;
     buf_extended |= (((buf_extended & MASK_15_BIT) != 0) ? 0xFFFF0000 : 0x0);
 
-    MemManager::SetIntReg(rd_, buf_extended);
+    MemManager::SetGPR(rd_, buf_extended);
 
     return true;
 }
@@ -153,14 +153,14 @@ bool Interpreter<MemManager>::HandleIns_LH()
 template <class MemManager>
 bool Interpreter<MemManager>::HandleIns_LW()
 {
-    assert(rd_ != RegFile::IntRegister::ZERO);
-    uint32_t adr = MemManager::GetIntReg(rs1_) + imm_;
+    assert(rd_ != RegFile::GPR::ZERO);
+    uint32_t adr = MemManager::GetGPR(rs1_) + imm_;
     uint32_t buf = 0;
     MemManager::Read(adr, reinterpret_cast<uint8_t*>(&buf), 4);
     if (is_host_big_endian != is_elf_big_endian) {
         buf = ReverseBits32(buf);
     }
-    MemManager::SetIntReg(rd_, buf);
+    MemManager::SetGPR(rd_, buf);
 
     return true;
 }
@@ -168,11 +168,11 @@ bool Interpreter<MemManager>::HandleIns_LW()
 template <class MemManager>
 bool Interpreter<MemManager>::HandleIns_LBU()
 {
-    assert(rd_ != RegFile::IntRegister::ZERO);
-    uint32_t adr = MemManager::GetIntReg(rs1_) + imm_;
+    assert(rd_ != RegFile::GPR::ZERO);
+    uint32_t adr = MemManager::GetGPR(rs1_) + imm_;
     uint32_t buf = 0;
     MemManager::Read(adr, reinterpret_cast<uint8_t*>(&buf), 1);
-    MemManager::SetIntReg(rd_, buf);
+    MemManager::SetGPR(rd_, buf);
 
     return true;
 }
@@ -180,8 +180,8 @@ bool Interpreter<MemManager>::HandleIns_LBU()
 template <class MemManager>
 bool Interpreter<MemManager>::HandleIns_LHU()
 {
-    assert(rd_ != RegFile::IntRegister::ZERO);
-    uint32_t adr = MemManager::GetIntReg(rs1_) + imm_;
+    assert(rd_ != RegFile::GPR::ZERO);
+    uint32_t adr = MemManager::GetGPR(rs1_) + imm_;
     uint16_t buf = 0;
     MemManager::Read(adr, reinterpret_cast<uint8_t*>(&buf), 2);
     if (is_host_big_endian != is_elf_big_endian) {
@@ -189,7 +189,7 @@ bool Interpreter<MemManager>::HandleIns_LHU()
     }
     uint32_t buf_extended = 0 | buf;
 
-    MemManager::SetIntReg(rd_, buf_extended);
+    MemManager::SetGPR(rd_, buf_extended);
 
     return true;
 }
@@ -198,10 +198,10 @@ template <class MemManager>
 bool Interpreter<MemManager>::HandleIns_JALR()
 {
     uint32_t next_ins = pc_ + 4;
-    MemManager::SetIntReg(rd_, next_ins);
+    MemManager::SetGPR(rd_, next_ins);
 
     is_jump_ins_ = 1;
-    uint32_t target_addr = MemManager::GetIntReg(rs1_) + imm_;
+    uint32_t target_addr = MemManager::GetGPR(rs1_) + imm_;
     target_addr &= 0xFFFFFFFE;
     pc_ += target_addr;
     return true;

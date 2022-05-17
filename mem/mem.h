@@ -194,42 +194,66 @@ class MemoryManager : public MemoryInterface
         return true;
     }
 
-    inline void SetIntReg(const uint32_t reg, const int32_t value) override
+    inline void SetGPR(const uint32_t reg, const int32_t value) override
     {
-        assert(reg < RegFile::IntRegister::INT_REGISTERS_COUNT);
-        if (reg == RegFile::IntRegister::ZERO) {
+        assert(reg < RegFile::GPR::GPR_COUNT);
+        if (reg == RegFile::GPR::ZERO) {
             return;
         }
-        regfile_.int_regs_[reg] = value;
+        regfile_.gpr_[reg] = value;
     }
 
-    inline int32_t GetIntReg(const uint32_t reg) const override
+    inline int32_t GetGPR(const uint32_t reg) const override
     {
-        assert(reg < RegFile::IntRegister::INT_REGISTERS_COUNT);
-        if (reg == RegFile::IntRegister::ZERO) {
+        assert(reg < RegFile::GPR::GPR_COUNT);
+        if (reg == RegFile::GPR::ZERO) {
             return 0x0;
         }
-        return regfile_.int_regs_[reg];
+        return regfile_.gpr_[reg];
     }
 
-    inline void SetCSRReg(const uint32_t reg, const int32_t value) override
+    inline void SetCSR_S(const uint32_t reg, const std::string& field,
+                         const int32_t value) override
     {
         assert(reg < RegFile::CSRRegister::CSR_REGISTERS_COUNT);
-        regfile_.csr_regs_[reg] = value;
+        regfile_.m_csr_regs_[reg].Write(field, value);
     }
 
-    inline int32_t GetCSRReg(const uint32_t reg) const override
+    inline int32_t GetCSR_S(const uint32_t reg,
+                            const std::string& field) const override
     {
         assert(reg < RegFile::CSRRegister::CSR_REGISTERS_COUNT);
-        return regfile_.csr_regs_[reg];
+        int32_t res = 0;
+        if (regfile_.m_csr_regs_[reg].Read(field, &res) == false) {
+            // handle false
+        }
+        return res;
     }
 
-    inline void SetPc(const int32_t value) override
+    inline void SetCSR_M(const uint32_t reg, const std::string& field,
+                         const int32_t value) override
+    {
+        assert(reg < RegFile::CSRRegister::CSR_REGISTERS_COUNT);
+        regfile_.m_csr_regs_[reg].Write(field, value);
+    }
+
+    inline int32_t GetCSR_M(const uint32_t reg,
+                            const std::string& field) const override
+    {
+        assert(reg < RegFile::CSRRegister::CSR_REGISTERS_COUNT);
+        int32_t res = 0;
+        if (regfile_.m_csr_regs_[reg].Read(field, &res) == false) {
+            // handle false
+        }
+        return res;
+    }
+
+    inline void SetPC(const int32_t value) override
     {
         regfile_.pc_ = value;
     }
 
-    inline int32_t GetPc() const override
+    inline int32_t GetPC() const override
     {
         return regfile_.pc_;
     }

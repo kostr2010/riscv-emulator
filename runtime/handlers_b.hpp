@@ -27,7 +27,7 @@ bool Interpreter<MemManager>::HandleInsOperands_B()
 template <class MemManager>
 bool Interpreter<MemManager>::HandleIns_BEQ()
 {
-    if (MemManager::GetIntReg(rs1_) == MemManager::GetIntReg(rs2_)) {
+    if (MemManager::GetGPR(rs1_) == MemManager::GetGPR(rs2_)) {
         is_jump_ins_ = 1;
         pc_ += imm_;
     }
@@ -38,7 +38,7 @@ bool Interpreter<MemManager>::HandleIns_BEQ()
 template <class MemManager>
 bool Interpreter<MemManager>::HandleIns_BNE()
 {
-    if (MemManager::GetIntReg(rs1_) != MemManager::GetIntReg(rs2_)) {
+    if (MemManager::GetGPR(rs1_) != MemManager::GetGPR(rs2_)) {
         is_jump_ins_ = 1;
         pc_ += imm_;
     }
@@ -48,7 +48,7 @@ bool Interpreter<MemManager>::HandleIns_BNE()
 template <class MemManager>
 bool Interpreter<MemManager>::HandleIns_BLT()
 {
-    if (MemManager::GetIntReg(rs1_) < MemManager::GetIntReg(rs2_)) {
+    if (MemManager::GetGPR(rs1_) < MemManager::GetGPR(rs2_)) {
         is_jump_ins_ = 1;
         pc_ += imm_;
     }
@@ -58,7 +58,7 @@ bool Interpreter<MemManager>::HandleIns_BLT()
 template <class MemManager>
 bool Interpreter<MemManager>::HandleIns_BGE()
 {
-    if (MemManager::GetIntReg(rs1_) >= MemManager::GetIntReg(rs2_)) {
+    if (MemManager::GetGPR(rs1_) >= MemManager::GetGPR(rs2_)) {
         is_jump_ins_ = 1;
         pc_ += imm_;
     }
@@ -68,8 +68,8 @@ bool Interpreter<MemManager>::HandleIns_BGE()
 template <class MemManager>
 bool Interpreter<MemManager>::HandleIns_BLTU()
 {
-    if (static_cast<uint32_t>(MemManager::GetIntReg(rs1_)) <
-        static_cast<uint32_t>(MemManager::GetIntReg(rs2_))) {
+    if (static_cast<uint32_t>(MemManager::GetGPR(rs1_)) <
+        static_cast<uint32_t>(MemManager::GetGPR(rs2_))) {
         is_jump_ins_ = 1;
         pc_ += imm_;
     }
@@ -79,8 +79,8 @@ bool Interpreter<MemManager>::HandleIns_BLTU()
 template <class MemManager>
 bool Interpreter<MemManager>::HandleIns_BGEU()
 {
-    if (static_cast<uint32_t>(MemManager::GetIntReg(rs1_)) >=
-        static_cast<uint32_t>(MemManager::GetIntReg(rs2_))) {
+    if (static_cast<uint32_t>(MemManager::GetGPR(rs1_)) >=
+        static_cast<uint32_t>(MemManager::GetGPR(rs2_))) {
         is_jump_ins_ = 1;
         pc_ += imm_;
     }

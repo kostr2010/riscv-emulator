@@ -22,7 +22,7 @@ template <class MemManager>
 bool Interpreter<MemManager>::HandleIns_JAL()
 {
     uint32_t next_ins = pc_ + 4;
-    MemManager::SetIntReg(rd_, next_ins);
+    MemManager::SetGPR(rd_, next_ins);
 
     is_jump_ins_ = 1;
     pc_ += imm_;
