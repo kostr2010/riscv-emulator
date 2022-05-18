@@ -1,4 +1,4 @@
-add_library(mem SHARED mem.cpp)
+add_library(mem SHARED mem.cpp regfile.cpp)
 target_include_directories(mem PRIVATE ${PROJECT_SOURCE_DIR})
 
 set(TEST_FOLDER ${CMAKE_CURRENT_SOURCE_DIR}/tests)
