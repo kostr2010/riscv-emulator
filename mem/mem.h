@@ -14,18 +14,13 @@
 #include <stdlib.h>
 #include <sys/mman.h>
 #include <unordered_map>
+#include <vector>
 
 constexpr uint32_t REGION1_ZONE_BEGIN = 0x00100000;
 constexpr uint32_t REGION2_ZONE_BEGIN = 0x00700000;
 constexpr uint32_t REGION1_ZONE_END = 0x00500000;
 constexpr uint32_t REGION2_ZONE_END = 0x03f00000;
 constexpr uint32_t PM_SPACE_END = 0x04000000;
-
-// TODO: tests memory (read-write-read)
-
-// TODO: attributes / exceptions
-// TODO: run simulation
-// TODO:
 
 constexpr uint32_t KERNEL_SPACE_END = 0x00400000;
 constexpr uint32_t USER_SPACE_BEGIN = 0xFC800000;
@@ -39,6 +34,10 @@ constexpr uint32_t PT_OUTER_IDX_UPPER_REGION_START = 1010;
 constexpr uint32_t N_PAGES = N_ENTRIES_PT_OUTER * MAX_ENTRIES_PT;
 constexpr uint32_t PAGE_SIZE = 4 * 1024;
 constexpr uint32_t TOTAL_RAM = N_PAGES * PAGE_SIZE;
+
+constexpr uint8_t MEM_EXEC = 0b00000001;
+constexpr uint8_t MEM_READ = 0b00000010;
+constexpr uint8_t MEM_WRITE = 0b00000100;
 
 // 64 MB - total physical memory space
 //
@@ -58,7 +57,7 @@ constexpr uint32_t TOTAL_RAM = N_PAGES * PAGE_SIZE;
 
 // virtual memory map
 /*----------------------------------    0x00000000    |-------------
-|              Kernel space 2MB                         VM Region 1
+| Imitation of Kernel space 2MB                         VM Region 1
 |----------------------------------- KERNEL_SPACE_END |-------------
 |               RESERVED
 |----------------------------------- USER_SPACE_BEGIN |-------------
@@ -66,11 +65,11 @@ constexpr uint32_t TOTAL_RAM = N_PAGES * PAGE_SIZE;
 |-----------------------------------
 |               Global data
 |-----------------------------------
-|            stack (grows down)                         VM Region 2
+|            heap (grows up)                         VM Region 2
 |                  |
 |-----------------------------------
 |                  |
-|            Heap (grows up)
+|            stack (grows down)
 |-----------------------------------    VM_SPACE_END  |-------------
 */
 
@@ -121,12 +120,6 @@ class MemoryManager : public MemoryInterface
     MemoryManager()
     {
         mem_ = (uint8_t*)calloc(N_PAGES * PAGE_SIZE, sizeof(uint8_t));
-        // errno = 0;
-        // mem_ = reinterpret_cast<uint8_t*>(mmap(NULL, N_PAGES * PAGE_SIZE,
-        //                                        PROT_READ | PROT_WRITE,
-        //                                        MAP_ANONYMOUS, 0, 0));
-        // std::cout << errno << "\n";
-        // assert(mem_ != MAP_FAILED);
 
         assert(mem_ != nullptr);
 
@@ -146,7 +139,11 @@ class MemoryManager : public MemoryInterface
         assert(buf != nullptr);
         assert(vaddr >= USER_SPACE_BEGIN && vaddr + count < VM_SPACE_END);
 
-        // TODO: check access rights
+        for (const auto& item : mem_map_) {
+            if (vaddr >= item.vaddr_begin_ && vaddr < item.vaddr_end_) {
+                assert((item.flags_ & MEM_READ) == 1);
+            }
+        }
 
         Uint32_t_Ptr ptr(vaddr);
         uint32_t buf_offset = 0;
@@ -163,8 +160,6 @@ class MemoryManager : public MemoryInterface
             count -= bytes_to_read;
         }
 
-        // memcpy(buf, VadrToPadr(ptr), count);
-
         return true;
     }
 
@@ -173,7 +168,11 @@ class MemoryManager : public MemoryInterface
         assert(buf != nullptr);
         assert(vaddr >= USER_SPACE_BEGIN && vaddr + count < VM_SPACE_END);
 
-        // TODO: check access rights
+        for (const auto& item : mem_map_) {
+            if (vaddr >= item.vaddr_begin_ && vaddr < item.vaddr_end_) {
+                assert((item.flags_ & MEM_WRITE) == 1);
+            }
+        }
 
         Uint32_t_Ptr ptr(vaddr);
         uint32_t buf_offset = 0;
@@ -189,7 +188,6 @@ class MemoryManager : public MemoryInterface
             buf_offset += bytes_to_write;
             count -= bytes_to_write;
         }
-        // memcpy(VadrToPadr(ptr), buf, count);
 
         return true;
     }
@@ -212,41 +210,41 @@ class MemoryManager : public MemoryInterface
         return regfile_.gpr_[reg];
     }
 
-    inline void SetCSR_S(const uint32_t reg, const std::string& field,
-                         const int32_t value) override
-    {
-        assert(reg < RegFile::CSRRegister::CSR_REGISTERS_COUNT);
-        regfile_.m_csr_regs_[reg].Write(field, value);
-    }
+    // inline void SetCSR_S(const uint32_t reg, const std::string& field,
+    //                      const int32_t value) override
+    // {
+    //     assert(reg < RegFile::CSRRegister::CSR_REGISTERS_COUNT);
+    //     regfile_.m_csr_regs_[reg].Write(field, value);
+    // }
 
-    inline int32_t GetCSR_S(const uint32_t reg,
-                            const std::string& field) const override
-    {
-        assert(reg < RegFile::CSRRegister::CSR_REGISTERS_COUNT);
-        int32_t res = 0;
-        if (regfile_.m_csr_regs_[reg].Read(field, &res) == false) {
-            // handle false
-        }
-        return res;
-    }
+    // inline int32_t GetCSR_S(const uint32_t reg,
+    //                         const std::string& field) const override
+    // {
+    //     // assert(reg < RegFile::CSRRegister::CSR_REGISTERS_COUNT);
+    //     // int32_t res = 0;
+    //     // if (regfile_.m_csr_regs_[reg].Read(field, &res) == false) {
+    //     //     // handle false
+    //     // }
+    //     // return res;
+    // }
 
-    inline void SetCSR_M(const uint32_t reg, const std::string& field,
-                         const int32_t value) override
-    {
-        assert(reg < RegFile::CSRRegister::CSR_REGISTERS_COUNT);
-        regfile_.m_csr_regs_[reg].Write(field, value);
-    }
+    // inline void SetCSR_M(const uint32_t reg, const std::string& field,
+    //                      const int32_t value) override
+    // {
+    //     assert(reg < RegFile::CSRRegister::CSR_REGISTERS_COUNT);
+    //     regfile_.m_csr_regs_[reg].Write(field, value);
+    // }
 
-    inline int32_t GetCSR_M(const uint32_t reg,
-                            const std::string& field) const override
-    {
-        assert(reg < RegFile::CSRRegister::CSR_REGISTERS_COUNT);
-        int32_t res = 0;
-        if (regfile_.m_csr_regs_[reg].Read(field, &res) == false) {
-            // handle false
-        }
-        return res;
-    }
+    // inline int32_t GetCSR_M(const uint32_t reg,
+    //                         const std::string& field) const override
+    // {
+    //     // assert(reg < RegFile::CSRRegister::CSR_REGISTERS_COUNT);
+    //     // int32_t res = 0;
+    //     // if (regfile_.m_csr_regs_[reg].Read(field, &res) == false) {
+    //     //     // handle false
+    //     // }
+    //     // return res;
+    // }
 
     inline void SetPC(const int32_t value) override
     {
@@ -261,6 +259,20 @@ class MemoryManager : public MemoryInterface
     inline uint8_t* GetRawMem()
     {
         return mem_;
+    }
+
+    // not the most optimal solution
+    class MemEntry
+    {
+      public:
+        uint32_t vaddr_begin_ = 0;
+        uint32_t vaddr_end_ = 0;
+        uint8_t flags_ = 0;
+    };
+
+    void AddMemMapEntry(const MemEntry& entry)
+    {
+        mem_map_.push_back(entry);
     }
 
   private:
@@ -303,6 +315,9 @@ class MemoryManager : public MemoryInterface
     PageTableOuter pt_;
     uint8_t* mem_ = nullptr;
     RegFile regfile_ = {};
+
+    // not the most optimal solution
+    std::vector<MemEntry> mem_map_;
 };
 
 #endif

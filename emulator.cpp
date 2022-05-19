@@ -1,7 +1,5 @@
-// #include "mem/mem.h"
-// #include "runtime/interpreter.h"
-// #include "utils/ins.h"
-
+#include "mem/mem.h"
+#include "runtime/interpreter.h"
 #include "utils/elfreader.h"
 #include <iostream>
 #include <vector>
@@ -13,19 +11,19 @@ int main(int argc, char** argv)
         std::exit(1);
     }
 
-    // Interpreter<MemoryManager> interpreter;
+    Interpreter<MemoryManager> interpreter;
 
     ElfFile elf_file(argv[1]);
 
-    for (uint32_t i = 0; i < elf_file.GetExecSectionNum(); ++i) {
-        std::cout << "Section " << i << "\n";
-        elf_file.DumpExecSection(i);
-        std::cout << "\n";
-    }
+    // for (uint32_t i = 0; i < elf_file.GetExecSectionNum(); ++i) {
+    //     std::cout << "Section " << i << "\n";
+    //     elf_file.DumpExecSection(i);
+    //     std::cout << "\n";
+    // }
 
-    // interpreter.LoadElf(elf_file);
+    interpreter.LoadElf(elf_file);
 
-    // interpreter.Run();
+    interpreter.Run();
 
     return 0;
 }

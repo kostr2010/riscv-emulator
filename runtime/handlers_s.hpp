@@ -39,7 +39,7 @@ bool Interpreter<MemManager>::HandleIns_SH()
     uint32_t adr = MemManager::GetGPR(rs1_) + imm_;
     uint16_t buf = MemManager::GetGPR(rs2_);
     if (is_host_big_endian != is_elf_big_endian) {
-        buf = ReverseBits16(buf);
+        buf = ReverseBytes16(buf);
     }
     MemManager::Write(adr, reinterpret_cast<uint8_t*>(&buf), 2);
 
@@ -52,7 +52,7 @@ bool Interpreter<MemManager>::HandleIns_SW()
     uint32_t adr = static_cast<uint32_t>(MemManager::GetGPR(rs1_)) + imm_;
     uint32_t buf = MemManager::GetGPR(rs2_);
     if (is_host_big_endian != is_elf_big_endian) {
-        buf = ReverseBits32(buf);
+        buf = ReverseBytes32(buf);
     }
 
     MemManager::Write(adr, reinterpret_cast<uint8_t*>(&buf), 4);

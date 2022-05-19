@@ -14,14 +14,14 @@ class MemoryInterface
                        const uint32_t count) = 0;
     virtual void SetGPR(const uint32_t reg, const int32_t value) = 0;
     virtual int32_t GetGPR(const uint32_t reg) const = 0;
-    virtual void SetCSR_S(const uint32_t reg, const std::string& field,
-                          const int32_t value) = 0;
-    virtual int32_t GetCSR_S(const uint32_t reg,
-                             const std::string& field) const = 0;
-    virtual void SetCSR_M(const uint32_t reg, const std::string& field,
-                          const int32_t value) = 0;
-    virtual int32_t GetCSR_M(const uint32_t reg,
-                             const std::string& field) const = 0;
+    // virtual void SetCSR_S(const uint32_t reg, const std::string& field,
+    //                       const int32_t value) = 0;
+    // virtual int32_t GetCSR_S(const uint32_t reg,
+    //                          const std::string& field) const = 0;
+    // virtual void SetCSR_M(const uint32_t reg, const std::string& field,
+    //                       const int32_t value) = 0;
+    // virtual int32_t GetCSR_M(const uint32_t reg,
+    //                          const std::string& field) const = 0;
     virtual void SetPC(const int32_t value) = 0;
     virtual int32_t GetPC() const = 0;
 };

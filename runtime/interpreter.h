@@ -2,6 +2,7 @@
 #define INTERPRETER_H_INCLUDED
 
 #include "err.h"
+#include "mem/mem.h"
 #include "mem/memory_interface.h"
 #include "mem/regfile.h"
 #include "utils/elfreader.h"
@@ -36,6 +37,7 @@ class Interpreter : public MemManager
 
     void Run()
     {
+        assert(is_elf_loaded);
         // We need path to elf
         // std::string path = "PathToELf";
         // int fd = open(path, O_RDONLY)
@@ -58,7 +60,7 @@ class Interpreter : public MemManager
         }
     }
 
-    static uint32_t ReverseBits32(uint32_t value)
+    static uint32_t ReverseBytes32(uint32_t value)
     {
         uint8_t b1 = 0, b2 = 0, b3 = 0, b4 = 0;
         uint8_t mask = 0x000000FF;
@@ -71,7 +73,7 @@ class Interpreter : public MemManager
                ((uint32_t)b3 << 8) + b4;
     }
 
-    static uint16_t ReverseBits16(uint16_t value)
+    static uint16_t ReverseBytes16(uint16_t value)
     {
         uint8_t b1 = 0, b2 = 0;
         uint8_t mask = 0x000000FF;
@@ -83,7 +85,19 @@ class Interpreter : public MemManager
 
     void LoadElf(const ElfFile& elf_file)
     {
-        std::cout << path;
+        std::vector<std::pair<uint32_t*, uint32_t> > elf_raw =
+            elf_file.GetRaw();
+
+        // now we load only .data section, likely it will be changed later
+        assert(elf_raw.size() == 1);
+        MemManager::Write(USER_SPACE_BEGIN,
+                          reinterpret_cast<uint8_t*>(elf_raw[0].first),
+                          elf_raw[0].second);
+
+        MemoryManager::MemEntry entry = { USER_SPACE_BEGIN,
+                                          USER_SPACE_BEGIN + elf_raw[0].second,
+                                          MEM_EXEC | MEM_READ };
+        MemManager::AddMemMapEntry(entry);
     }
 
   private:
@@ -135,6 +149,7 @@ class Interpreter : public MemManager
     // interpreter_state_
     bool is_host_big_endian = true;
     bool is_elf_big_endian = true;
+    bool is_elf_loaded = false;
 
     uint32_t pc_{};
     std::vector<Ins> program_ = {};

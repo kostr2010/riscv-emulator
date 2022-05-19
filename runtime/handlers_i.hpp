@@ -139,7 +139,7 @@ bool Interpreter<MemManager>::HandleIns_LH()
     MemManager::Read(adr, reinterpret_cast<uint8_t*>(&buf), 2);
     uint32_t MASK_15_BIT = 0x00000080;
     if (is_host_big_endian != is_elf_big_endian) {
-        buf = ReverseBits16(buf);
+        buf = ReverseBytes16(buf);
         MASK_15_BIT = 0x00008000;
     }
     uint32_t buf_extended = 0 | buf;
@@ -158,7 +158,7 @@ bool Interpreter<MemManager>::HandleIns_LW()
     uint32_t buf = 0;
     MemManager::Read(adr, reinterpret_cast<uint8_t*>(&buf), 4);
     if (is_host_big_endian != is_elf_big_endian) {
-        buf = ReverseBits32(buf);
+        buf = ReverseBytes32(buf);
     }
     MemManager::SetGPR(rd_, buf);
 
@@ -185,7 +185,7 @@ bool Interpreter<MemManager>::HandleIns_LHU()
     uint16_t buf = 0;
     MemManager::Read(adr, reinterpret_cast<uint8_t*>(&buf), 2);
     if (is_host_big_endian != is_elf_big_endian) {
-        buf = ReverseBits16(buf);
+        buf = ReverseBytes16(buf);
     }
     uint32_t buf_extended = 0 | buf;
 

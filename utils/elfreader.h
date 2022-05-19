@@ -1,3 +1,6 @@
+#ifndef ELFREADER_H_INCLUDED
+#define ELFREADER_H_INCLUDED
+
 #include <assert.h>
 #include <bitset>
 #include <elf.h>
@@ -40,12 +43,13 @@ class ElfFile
         // std::cout << "exec sections count " << executable_section_count
         //           << "\n";
         // std::cout << "e_shstrndx " << header_.e_shstrndx << "\n";
+        exec_sections_raw_.shrink_to_fit();
     }
 
     ~ElfFile()
     {
         free(section_header_table_);
-        for (uint32_t i = 0; i < executable_section_count; ++i) {
+        for (uint32_t i = 0; i < exec_sections_raw_.size(); ++i) {
             free(exec_sections_raw_[i].first);
         }
     }
@@ -57,16 +61,11 @@ class ElfFile
 
     void DumpExecSection(uint32_t num)
     {
-        assert(num < executable_section_count);
+        assert(num < exec_sections_raw_.size());
         for (uint32_t i = 0; i < exec_sections_raw_[num].second / 4; ++i) {
             std::cout << "0x" << std::setfill('0') << std::setw(8) << std::hex
                       << unsigned(exec_sections_raw_[num].first[i]) << "\n";
         }
-    }
-
-    uint32_t GetExecSectionNum() const
-    {
-        return executable_section_count;
     }
 
   private:
@@ -112,22 +111,14 @@ class ElfFile
                 section_header_table_[i].sh_size;
             counter++;
         }
-        executable_section_count = counter;
-
-        // text section
-        // raw_data_ = exec_sections_raw_[0].first + sizeof(Elf32_Ehdr) +
-        //             header_.e_phnum * header_.e_phentsize;
-
-        // instr_count_ = program_header_table_[0].p_memsz
     }
-    Elf32_Shdr* section_header_table_;
     Elf32_Ehdr header_;
+    Elf32_Shdr* section_header_table_;
 
     uint32_t entrypoint_ = 0;
-    uint32_t executable_section_count = 0;
-    // uint32_t instr_count_ = 0;
 
-    // uint32_t* raw_data_ = nullptr;
-    // first - data, second -size of data
+    // first - data, second - size of data in bytes
     std::vector<std::pair<uint32_t*, uint32_t> > exec_sections_raw_;
 };
+
+#endif

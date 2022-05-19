@@ -23,9 +23,12 @@ struct RegFile
 
         struct Field
         {
+            Field() = default;
+
             Field(const uint32_t& m, const Spec& s, const uint8_t& o)
                 : MASK_{ m }, spec_{ s }, off_{ o }
-            {}
+            {
+            }
 
             uint32_t MASK_ = 0x11111111;
             Spec spec_ = Spec::NONE;
@@ -34,7 +37,8 @@ struct RegFile
 
         CSR(const std::unordered_map<std::string, Field>& fields = {})
             : fields_(fields), value_(0)
-        {}
+        {
+        }
 
         bool Write(const std::string& field, int32_t value)
         {
@@ -136,7 +140,7 @@ struct RegFile
         CSR_M_COUNT,
     };
 
-    Regfile();
+    RegFile();
 
     int32_t pc_;
     std::array<int32_t, GPR::GPR_COUNT> gpr_ = {};

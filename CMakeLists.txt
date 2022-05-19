@@ -15,11 +15,11 @@ add_subdirectory(runtime)
 
 add_executable(emulator emulator.cpp)
 
-# target_include_directories(emulator PRIVATE ${PROJECT_SOURCE_DIR})
+target_include_directories(emulator PRIVATE ${PROJECT_SOURCE_DIR})
 
-# target_link_libraries(emulator utils)
-# target_link_libraries(emulator modules)
-# target_link_libraries(emulator mem)
+target_link_libraries(emulator utils)
+target_link_libraries(emulator modules)
+target_link_libraries(emulator mem)
 
 set(TEST_FOLDER ${CMAKE_CURRENT_SOURCE_DIR}/tests)
 
