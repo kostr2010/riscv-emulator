@@ -210,41 +210,41 @@ class MemoryManager : public MemoryInterface
         return regfile_.gpr_[reg];
     }
 
-    // inline void SetCSR_S(const uint32_t reg, const std::string& field,
-    //                      const int32_t value) override
-    // {
-    //     assert(reg < RegFile::CSRRegister::CSR_REGISTERS_COUNT);
-    //     regfile_.m_csr_regs_[reg].Write(field, value);
-    // }
+    inline void SetCSR_S(const uint32_t reg, const std::string& field,
+                         const int32_t value) override
+    {
+        assert(reg < RegFile::CSR_S::CSR_S_COUNT);
+        regfile_.m_csr_regs_[reg].Write(field, value);
+    }
 
-    // inline int32_t GetCSR_S(const uint32_t reg,
-    //                         const std::string& field) const override
-    // {
-    //     // assert(reg < RegFile::CSRRegister::CSR_REGISTERS_COUNT);
-    //     // int32_t res = 0;
-    //     // if (regfile_.m_csr_regs_[reg].Read(field, &res) == false) {
-    //     //     // handle false
-    //     // }
-    //     // return res;
-    // }
+    inline int32_t GetCSR_S(const uint32_t reg,
+                            const std::string& field) const override
+    {
+        assert(reg < RegFile::CSR_S::CSR_S_COUNT);
+        int32_t res = 0;
+        if (regfile_.m_csr_regs_[reg].Read(field, &res) == false) {
+            // handle false
+        }
+        return res;
+    }
 
-    // inline void SetCSR_M(const uint32_t reg, const std::string& field,
-    //                      const int32_t value) override
-    // {
-    //     assert(reg < RegFile::CSRRegister::CSR_REGISTERS_COUNT);
-    //     regfile_.m_csr_regs_[reg].Write(field, value);
-    // }
+    inline void SetCSR_M(const uint32_t reg, const std::string& field,
+                         const int32_t value) override
+    {
+        assert(reg < RegFile::CSR_M::CSR_M_COUNT);
+        regfile_.m_csr_regs_[reg].Write(field, value);
+    }
 
-    // inline int32_t GetCSR_M(const uint32_t reg,
-    //                         const std::string& field) const override
-    // {
-    //     // assert(reg < RegFile::CSRRegister::CSR_REGISTERS_COUNT);
-    //     // int32_t res = 0;
-    //     // if (regfile_.m_csr_regs_[reg].Read(field, &res) == false) {
-    //     //     // handle false
-    //     // }
-    //     // return res;
-    // }
+    inline int32_t GetCSR_M(const uint32_t reg,
+                            const std::string& field) const override
+    {
+        assert(reg < RegFile::CSR_M::CSR_M_COUNT);
+        int32_t res = 0;
+        if (regfile_.m_csr_regs_[reg].Read(field, &res) == false) {
+            // handle false
+        }
+        return res;
+    }
 
     inline void SetPC(const int32_t value) override
     {
@@ -294,8 +294,6 @@ class MemoryManager : public MemoryInterface
                 ++page_num_counter;
             }
         }
-
-        // printf("Addr is %p\n", (void*)(pt_[1010][0] - mem_));
 
         assert(pt_.size() == N_ENTRIES_PT_OUTER);
     }
