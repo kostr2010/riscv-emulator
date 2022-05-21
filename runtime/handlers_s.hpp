@@ -53,7 +53,6 @@ bool Interpreter<MemManager>::HandleIns_SW()
     uint32_t buf = MemManager::GetGPR(rs2_);
     if (is_host_big_endian != is_elf_big_endian) {
         buf = ReverseBytes32(buf);
-        std::cout << "here\n";
     }
 
     MemManager::Write(adr, reinterpret_cast<uint8_t*>(&buf), 4);

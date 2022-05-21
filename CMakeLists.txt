@@ -20,13 +20,3 @@ target_include_directories(emulator PRIVATE ${PROJECT_SOURCE_DIR})
 target_link_libraries(emulator utils)
 target_link_libraries(emulator modules)
 target_link_libraries(emulator mem)
-
-set(TEST_FOLDER ${CMAKE_CURRENT_SOURCE_DIR}/tests)
-
-set(TESTS
-    ${TEST_FOLDER}/tests.cpp
-    )
-
-add_executable(tests ${TESTS})
-target_link_libraries(tests utils modules mem ${GTEST_LIBRARIES} pthread)
-target_include_directories(tests PRIVATE ${PROJECT_SOURCE_DIR})

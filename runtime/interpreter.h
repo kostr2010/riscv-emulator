@@ -126,7 +126,6 @@ class Interpreter : public MemManager
         uint32_t ins_raw = 0;
         assert(
             MemManager::Read(vaddr, reinterpret_cast<uint8_t*>(&ins_raw), 4));
-        std::cout << "Fetched raw ins 0b" << std::bitset<32>(ins_raw) << "\n";
         curr_ins_ = Ins(ins_raw);
 
         std::cout << curr_ins_.ToString() << "\n";
