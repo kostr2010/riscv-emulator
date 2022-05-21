@@ -35,9 +35,9 @@ constexpr uint32_t N_PAGES = N_ENTRIES_PT_OUTER * MAX_ENTRIES_PT;
 constexpr uint32_t PAGE_SIZE = 4 * 1024;
 constexpr uint32_t TOTAL_RAM = N_PAGES * PAGE_SIZE;
 
-constexpr uint8_t MEM_EXEC = 0b00000001;
-constexpr uint8_t MEM_READ = 0b00000010;
-constexpr uint8_t MEM_WRITE = 0b00000100;
+constexpr uint8_t MEM_EXEC = 1;
+constexpr uint8_t MEM_READ = 2;
+constexpr uint8_t MEM_WRITE = 4;
 
 // 64 MB - total physical memory space
 //
@@ -57,7 +57,7 @@ constexpr uint8_t MEM_WRITE = 0b00000100;
 
 // virtual memory map
 /*----------------------------------    0x00000000    |-------------
-| Imitation of Kernel space 2MB                         VM Region 1
+| Imitation of Kernel space 4MB                         VM Region 1
 |----------------------------------- KERNEL_SPACE_END |-------------
 |               RESERVED
 |----------------------------------- USER_SPACE_BEGIN |-------------
@@ -141,7 +141,7 @@ class MemoryManager : public MemoryInterface
 
         for (const auto& item : mem_map_) {
             if (vaddr >= item.vaddr_begin_ && vaddr < item.vaddr_end_) {
-                assert((item.flags_ & MEM_READ) == 1);
+                assert(item.flags_ & MEM_READ);
             }
         }
 
@@ -170,7 +170,7 @@ class MemoryManager : public MemoryInterface
 
         for (const auto& item : mem_map_) {
             if (vaddr >= item.vaddr_begin_ && vaddr < item.vaddr_end_) {
-                assert((item.flags_ & MEM_WRITE) == 1);
+                assert(item.flags_ & MEM_WRITE);
             }
         }
 

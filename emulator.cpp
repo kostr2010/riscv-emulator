@@ -15,13 +15,13 @@ int main(int argc, char** argv)
 
     ElfFile elf_file(argv[1]);
 
-    // for (uint32_t i = 0; i < elf_file.GetExecSectionNum(); ++i) {
-    //     std::cout << "Section " << i << "\n";
-    //     elf_file.DumpExecSection(i);
-    //     std::cout << "\n";
-    // }
+    for (uint32_t i = 0; i < 1; ++i) {
+        std::cout << "Section " << i << "\n";
+        elf_file.DumpExecSection(i);
+        std::cout << "\n";
+    }
 
-    interpreter.LoadElf(elf_file);
+    interpreter.RunLoader(elf_file);
 
     interpreter.Run();
 

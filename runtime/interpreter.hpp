@@ -19,9 +19,7 @@ void Interpreter<MemManager>::UpdatePc()
 template <class MemManager>
 bool Interpreter<MemManager>::HandleIns()
 {
-    curr_ins_ = &(program_[PCToIndex(pc_)]);
-
-    switch (curr_ins_->GetInsMnemonic()) {
+    switch (curr_ins_.GetInsMnemonic()) {
 #define OPLIST(ins, format, opcode, is_funct7, funct7, is_funct3, funct3,     \
                mnemonic)                                                      \
     case Ins::InsMnemonic::ins:                                               \

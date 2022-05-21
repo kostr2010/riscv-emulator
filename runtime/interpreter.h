@@ -26,32 +26,29 @@ class Interpreter : public MemManager
         SetHostEndianness();
     }
 
-    Interpreter(const std::vector<Ins>& program) : program_(program)
-    {
-        SetHostEndianness();
+    // Interpreter(const std::vector<Ins>& program) : program_(program)
+    // {
+    //     SetHostEndianness();
 
-        if (!program.empty()) {
-            curr_ins_ = &(program_[PCToIndex(pc_)]);
-        }
-    }
+    //     if (!program.empty()) {
+    //         curr_ins_ = &(program_[PCToIndex(pc_)]);
+    //     }
+    // }
 
     void Run()
     {
         assert(is_elf_loaded);
-        // We need path to elf
-        // std::string path = "PathToELf";
-        // int fd = open(path, O_RDONLY)
 
-        //              program_loader.SetFD(fd);
-        // uint32_t entrypoint = program_loader.LoadElf32IntoMemory();
-        // pc_ = entrypoint;
-        // for (;;) { // Loop till last command
-        //     uint32_t rawInstruction = GetRawInstr();
-        //     // HandleRawIns(rawInstruction);
-        // }
+        pc_ = host_entrypoint_;
 
-        while (PCToIndex(pc_) < program_.size() && HandleIns()) {
+        int counter = 0;
+        while (pc_ != RegFile::GPR::ZERO) {
+            if (counter == 10)
+                break;
+            FetchIns();
+            HandleIns();
             UpdatePc();
+            counter++;
         }
 
         if (err_.err_type_ != Err::ErrType::NONE) {
@@ -83,12 +80,14 @@ class Interpreter : public MemManager
         return ((uint16_t)b1 << 8) + b2;
     }
 
-    void LoadElf(const ElfFile& elf_file)
+    void RunLoader(ElfFile& elf_file)
     {
-        std::vector<std::pair<uint32_t*, uint32_t> > elf_raw =
+        std::vector<std::pair<uint32_t*, uint32_t> >& elf_raw =
             elf_file.GetRaw();
 
         // now we load only .data section, likely it will be changed later
+        std::cout << "elf raw size is " << elf_raw.size() << "\n";
+        std::cout << "section size is " << elf_raw[0].second << "\n";
         assert(elf_raw.size() == 1);
         MemManager::Write(USER_SPACE_BEGIN,
                           reinterpret_cast<uint8_t*>(elf_raw[0].first),
@@ -98,6 +97,11 @@ class Interpreter : public MemManager
                                           USER_SPACE_BEGIN + elf_raw[0].second,
                                           MEM_EXEC | MEM_READ };
         MemManager::AddMemMapEntry(entry);
+
+        host_entrypoint_ = elf_file.GetHostEntrypoint();
+        InitStack(USER_SPACE_BEGIN + elf_raw[0].second);
+
+        is_elf_loaded = true;
     }
 
   private:
@@ -116,14 +120,37 @@ class Interpreter : public MemManager
     INSTRUCTION_LIST(OPLIST)
 #undef OPLIST
 
-    inline size_t PCToIndex(const uint32_t pc) const
+    void FetchIns()
     {
-        return pc / 4;
+        uint32_t vaddr = USER_SPACE_BEGIN + pc_ - host_entrypoint_;
+        uint32_t ins_raw = 0;
+        assert(
+            MemManager::Read(vaddr, reinterpret_cast<uint8_t*>(&ins_raw), 4));
+        std::cout << "Fetched raw ins " << ins_raw << "\n";
+        curr_ins_ = Ins(ins_raw);
+
+        std::cout << curr_ins_.ToString() << "\n";
     }
+
+    void InitStack(uint32_t start_vaddr)
+    {
+        // subtraction of 3 is needed for 4 byte allignment
+        uint32_t stack_root = VM_SPACE_END - 3;
+        MemoryManager::MemEntry entry = { start_vaddr, stack_root,
+                                          MEM_WRITE | MEM_READ };
+        MemManager::AddMemMapEntry(entry);
+
+        MemManager::SetGPR(RegFile::GPR::SP, stack_root);
+    }
+
+    // inline size_t PCToIndex(const uint32_t pc) const
+    // {
+    //     return pc / 4;
+    // }
 
     inline void SetError(const Err::ErrType& err_type, const std::string& msg)
     {
-        err_ = Err(err_type, msg, pc_, program_[PCToIndex(pc_)]);
+        err_ = Err(err_type, msg, pc_, curr_ins_);
     }
 
     inline void PrintError() const
@@ -138,22 +165,15 @@ class Interpreter : public MemManager
         is_host_big_endian = (p[0] == 1) ? false : true;
     }
 
-    // uint32_t GetRawInstr()
-    // {
-    //     ASSERT(pc_ % 4 == 0);
-    //     return *reinterpret_cast<uint32_t*>(program_loader.Translate(pc_));
-    // }
-
-    // ReadElf program_loader{};
-
     // interpreter_state_
     bool is_host_big_endian = true;
     bool is_elf_big_endian = true;
     bool is_elf_loaded = false;
 
     uint32_t pc_{};
-    std::vector<Ins> program_ = {};
-    Ins* curr_ins_ = nullptr;
+    uint32_t host_entrypoint_{};
+    // std::vector<Ins> program_ = {};
+    Ins curr_ins_{};
     int32_t imm_{};
     uint32_t rd_{};
     uint32_t rs1_{};
