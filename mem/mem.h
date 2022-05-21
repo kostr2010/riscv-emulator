@@ -119,7 +119,9 @@ class MemoryManager : public MemoryInterface
   public:
     MemoryManager()
     {
-        mem_ = (uint8_t*)calloc(N_PAGES * PAGE_SIZE, sizeof(uint8_t));
+        uint32_t reserved_size = 4 * 1024 * 1024;
+        mem_ = (uint8_t*)calloc(N_PAGES * PAGE_SIZE + reserved_size,
+                                sizeof(uint8_t));
 
         assert(mem_ != nullptr);
 
@@ -128,7 +130,6 @@ class MemoryManager : public MemoryInterface
 
     ~MemoryManager()
     {
-        // assert(munmap(mem_, N_PAGES * PAGE_SIZE) == 0);
         free(mem_);
         mem_ = nullptr;
     }
@@ -182,7 +183,6 @@ class MemoryManager : public MemoryInterface
                                  ? PAGE_SIZE - ptr.Offset()
                                  : count;
             memcpy(VadrToPadr(ptr), buf + buf_offset, bytes_to_write);
-
             ptr.NextPage();
 
             buf_offset += bytes_to_write;
@@ -282,6 +282,8 @@ class MemoryManager : public MemoryInterface
         // Region1 memory mapping
         for (size_t i = 0; i < MAX_ENTRIES_PT; ++i) {
             pt_[0][i] = mem_ + REGION1_ZONE_BEGIN + PAGE_SIZE * i;
+            assert(pt_[0][i] - mem_ >= REGION1_ZONE_BEGIN &&
+                   pt_[0][i] - mem_ < REGION1_ZONE_END);
         }
 
         // Region2 memory mapping
@@ -291,6 +293,9 @@ class MemoryManager : public MemoryInterface
             for (size_t j = 0; j < MAX_ENTRIES_PT; ++j) {
                 pt_[i][j] =
                     mem_ + REGION2_ZONE_BEGIN + PAGE_SIZE * page_num_counter;
+
+                assert(pt_[i][j] - mem_ >= REGION2_ZONE_BEGIN &&
+                       pt_[i][j] - mem_ < REGION2_ZONE_END);
                 ++page_num_counter;
             }
         }
@@ -300,12 +305,15 @@ class MemoryManager : public MemoryInterface
 
     inline uint8_t* VadrToPadr(const Uint32_t_Ptr& vadr_ptr) const
     {
-        assert(vadr_ptr.raw_ >= USER_SPACE_BEGIN &&
-               vadr_ptr.raw_ < VM_SPACE_END);
         assert((vadr_ptr.PTIdxOuter() == 0) |
                (vadr_ptr.PTIdxOuter() >= PT_OUTER_IDX_UPPER_REGION_START));
-        return pt_.at(vadr_ptr.PTIdxOuter()).at(vadr_ptr.PTIdxInner()) +
-               vadr_ptr.Offset();
+
+        uint8_t* result =
+            pt_.at(vadr_ptr.PTIdxOuter()).at(vadr_ptr.PTIdxInner()) +
+            vadr_ptr.Offset();
+        assert(result >= REGION2_ZONE_BEGIN + mem_ &&
+               result <= REGION2_ZONE_END + mem_);
+        return result;
     }
 
     using PageTableInner = std::unordered_map<uint32_t, uint8_t*>;

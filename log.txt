@@ -1,5 +1,0 @@
-Note: Google Test filter = TESTS_LW.6
-[==========] Running 1 test from 1 test suite.
-[----------] Global test environment set-up.
-[----------] 1 test from TESTS_LW
-[ RUN      ] TESTS_LW.6

@@ -41,14 +41,12 @@ class Interpreter : public MemManager
 
         pc_ = host_entrypoint_;
 
-        int counter = 0;
-        while (pc_ != RegFile::GPR::ZERO) {
-            if (counter == 10)
-                break;
+        const auto RA = unsigned(MemManager::GetGPR(RegFile::GPR::X1));
+
+        while (pc_ != RA) {
             FetchIns();
             HandleIns();
             UpdatePc();
-            counter++;
         }
 
         if (err_.err_type_ != Err::ErrType::NONE) {
@@ -101,6 +99,8 @@ class Interpreter : public MemManager
         host_entrypoint_ = elf_file.GetHostEntrypoint();
         InitStack(USER_SPACE_BEGIN + elf_raw[0].second);
 
+        MemManager::SetGPR(RegFile::GPR::X1, 0);
+
         is_elf_loaded = true;
     }
 
@@ -126,7 +126,7 @@ class Interpreter : public MemManager
         uint32_t ins_raw = 0;
         assert(
             MemManager::Read(vaddr, reinterpret_cast<uint8_t*>(&ins_raw), 4));
-        std::cout << "Fetched raw ins " << ins_raw << "\n";
+        std::cout << "Fetched raw ins 0b" << std::bitset<32>(ins_raw) << "\n";
         curr_ins_ = Ins(ins_raw);
 
         std::cout << curr_ins_.ToString() << "\n";

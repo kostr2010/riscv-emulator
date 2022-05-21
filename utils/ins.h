@@ -141,12 +141,12 @@ class Ins
     Ins(const uint32_t bits) : ins_raw(bits)
     {
         const auto ins_opcode = bits & MASK_OPCODE;
-        const auto ins_funct7 = bits & MASK_FUNCT7;
-        const auto ins_funct3 = bits & MASK_FUNCT3;
+        const auto ins_funct7 = (bits & MASK_FUNCT7) >> 25;
+        const auto ins_funct3 = (bits & MASK_FUNCT3) >> 12;
 
 #define OPLIST(ins, format, opcode, is_funct7, funct7, is_funct3, funct3,     \
                mnemonic)                                                      \
-    if ((opcode == ins_opcode) &&                                             \
+    if ((InsOpcode::opcode == ins_opcode) &&                                  \
         (funct7 == (is_funct7 ? ins_funct7 : funct7)) &&                      \
         (funct3 == (is_funct3 ? ins_funct3 : funct3))) {                      \
         fmt = InsFormat::format;                                              \
@@ -155,6 +155,9 @@ class Ins
     }
         INSTRUCTION_LIST(OPLIST)
 #undef OPLIST
+
+        std::cout << "Decoder: Illigal instruction\n";
+        std::exit(1);
     }
 
     static inline Ins GetInsFromRaw(const uint32_t bits)

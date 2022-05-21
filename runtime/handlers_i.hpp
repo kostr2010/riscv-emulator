@@ -197,12 +197,11 @@ bool Interpreter<MemManager>::HandleIns_LHU()
 template <class MemManager>
 bool Interpreter<MemManager>::HandleIns_JALR()
 {
-    uint32_t next_ins = pc_ + 4;
-    MemManager::SetGPR(rd_, next_ins);
+    MemManager::SetGPR(rd_, pc_ + 4);
 
     is_jump_ins_ = 1;
     uint32_t target_addr = MemManager::GetGPR(rs1_) + imm_;
     target_addr &= 0xFFFFFFFE;
-    pc_ += target_addr;
+    pc_ = target_addr;
     return true;
 }
