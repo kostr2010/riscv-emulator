@@ -6,11 +6,14 @@
     TEST(TESTS_##INS_MNEMONIC, __LINE__)                                      \
     {}
 
-#define TEST_IMM_OP(INS_MNEMONIC, rd, rs1, EXPECTED, rs1_val, imm_val, ...)   \
+#define TEST_IMM_OP(INS_MNEMONIC, rd, rs1, EXPECTED, rs1_val, imm, ...)       \
     TEST(TESTS_##INS_MNEMONIC, __LINE__)                                      \
     {                                                                         \
-        Interpreter<MemoryManager> interpreter(                               \
-            { Ins::MakeIns_##INS_MNEMONIC(imm_val, rs1, rd) });               \
+        if (rd == RegFile::GPR::X1 || rs1 == RegFile::GPR::X1) {              \
+            return;                                                           \
+        }                                                                     \
+        Interpreter<MemoryManager> interpreter{};                             \
+        interpreter.RunLoader({ Ins::MakeIns_##INS_MNEMONIC(imm, rs1, rd) }); \
         interpreter.SetGPR(rs1, rs1_val);                                     \
         interpreter.Run();                                                    \
         ASSERT_EQ(interpreter.GetGPR(rd), EXPECTED);                          \
@@ -24,8 +27,12 @@
                    ...)                                                       \
     TEST(TESTS_##INS_MNEMONIC, __LINE__)                                      \
     {                                                                         \
-        Interpreter<MemoryManager> interpreter(                               \
-            { Ins::MakeIns_##INS_MNEMONIC(rs2, rs1, rd) });                   \
+        if (rd == RegFile::GPR::X1 || rs1 == RegFile::GPR::X1 ||              \
+            rs2 == RegFile::GPR::X1) {                                        \
+            return;                                                           \
+        }                                                                     \
+        Interpreter<MemoryManager> interpreter{};                             \
+        interpreter.RunLoader({ Ins::MakeIns_##INS_MNEMONIC(rs2, rs1, rd) }); \
         interpreter.SetGPR(rs1, rs1_val);                                     \
         interpreter.SetGPR(rs2, rs2_val);                                     \
         interpreter.Run();                                                    \
@@ -36,10 +43,14 @@
                   INS_MNEMONIC, align)                                        \
     TEST(TESTS_##INS_MNEMONIC, __LINE__)                                      \
     {                                                                         \
+        if (rd == RegFile::GPR::X1 || rs1 == RegFile::GPR::X1) {              \
+            return;                                                           \
+        }                                                                     \
         int32_t buf = std::numeric_limits<int32_t>::min();                    \
         uint32_t addr = static_cast<uint32_t>(USER_SPACE_BEGIN + 0x1000);     \
-        uint32_t reg_buf = rs1 <= 1 ? 11 : rs1 - 1;                           \
-        Interpreter<MemoryManager> interpreter(                               \
+        uint32_t reg_buf = rs1 <= 3 ? 11 : rs1 - 1;                           \
+        Interpreter<MemoryManager> interpreter{};                             \
+        interpreter.RunLoader(                                                \
             { Ins::MakeIns_SW(imm_val, reg_buf, rs1),                         \
               Ins::MakeIns_##INS_MNEMONIC(imm_val, rs1, rd) });               \
         interpreter.SetGPR(reg_buf, buf);                                     \

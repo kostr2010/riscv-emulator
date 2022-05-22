@@ -1,0 +1,58 @@
+
+factorial:     file format elf32-littleriscv
+
+
+Disassembly of section .text:
+
+00010074 <fact>:
+   10074:	fe010113          	addi	sp,sp,-32
+   10078:	00112e23          	sw	ra,28(sp)
+   1007c:	00812c23          	sw	s0,24(sp)
+   10080:	02010413          	addi	s0,sp,32
+   10084:	fea42623          	sw	a0,-20(s0)
+   10088:	fec42783          	lw	a5,-20(s0)
+   1008c:	00078863          	beq	a5,zero,1009c <fact+0x28>
+   10090:	fec42703          	lw	a4,-20(s0)
+   10094:	00100793          	addi	a5,zero,1
+   10098:	00f71663          	bne	a4,a5,100a4 <fact+0x30>
+   1009c:	00100793          	addi	a5,zero,1
+   100a0:	0280006f          	jal	zero,100c8 <fact+0x54>
+   100a4:	fec42783          	lw	a5,-20(s0)
+   100a8:	fff78793          	addi	a5,a5,-1
+   100ac:	00078513          	addi	a0,a5,0
+   100b0:	fc5ff0ef          	jal	ra,10074 <fact>
+   100b4:	00050793          	addi	a5,a0,0
+   100b8:	fec42583          	lw	a1,-20(s0)
+   100bc:	00078513          	addi	a0,a5,0
+   100c0:	04c000ef          	jal	ra,1010c <__mulsi3>
+   100c4:	00050793          	addi	a5,a0,0
+   100c8:	00078513          	addi	a0,a5,0
+   100cc:	01c12083          	lw	ra,28(sp)
+   100d0:	01812403          	lw	s0,24(sp)
+   100d4:	02010113          	addi	sp,sp,32
+   100d8:	00008067          	jalr	zero,0(ra)
+
+000100dc <main>:
+   100dc:	ff010113          	addi	sp,sp,-16
+   100e0:	00112623          	sw	ra,12(sp)
+   100e4:	00812423          	sw	s0,8(sp)
+   100e8:	01010413          	addi	s0,sp,16
+   100ec:	00500513          	addi	a0,zero,5
+   100f0:	f85ff0ef          	jal	ra,10074 <fact>
+   100f4:	00050793          	addi	a5,a0,0
+   100f8:	00078513          	addi	a0,a5,0
+   100fc:	00c12083          	lw	ra,12(sp)
+   10100:	00812403          	lw	s0,8(sp)
+   10104:	01010113          	addi	sp,sp,16
+   10108:	00008067          	jalr	zero,0(ra)
+
+0001010c <__mulsi3>:
+   1010c:	00050613          	addi	a2,a0,0
+   10110:	00000513          	addi	a0,zero,0
+   10114:	0015f693          	andi	a3,a1,1
+   10118:	00068463          	beq	a3,zero,10120 <__mulsi3+0x14>
+   1011c:	00c50533          	add	a0,a0,a2
+   10120:	0015d593          	srli	a1,a1,0x1
+   10124:	00161613          	slli	a2,a2,0x1
+   10128:	fe0596e3          	bne	a1,zero,10114 <__mulsi3+0x8>
+   1012c:	00008067          	jalr	zero,0(ra)

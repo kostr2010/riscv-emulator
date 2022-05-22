@@ -3,19 +3,19 @@
 template <class MemManager>
 bool Interpreter<MemManager>::HandleInsOperands_I()
 {
-    if (!curr_ins_->GetImm(&imm_)) {
+    if (!curr_ins_.GetImm(&imm_)) {
         SetError(Err::ErrType::INVALID_INS_FORMAT,
                  "invalid instruction format! couldn't get IMM");
         return false;
     }
 
-    if (!curr_ins_->GetRd(&rd_)) {
+    if (!curr_ins_.GetRd(&rd_)) {
         SetError(Err::ErrType::INVALID_INS_FORMAT,
                  "invalid instruction format! couldn't get RD");
         return false;
     }
 
-    if (!curr_ins_->GetRs1(&rs1_)) {
+    if (!curr_ins_.GetRs1(&rs1_)) {
         SetError(Err::ErrType::INVALID_INS_FORMAT,
                  "invalid instruction format! couldn't get RS1");
         return false;
@@ -197,12 +197,11 @@ bool Interpreter<MemManager>::HandleIns_LHU()
 template <class MemManager>
 bool Interpreter<MemManager>::HandleIns_JALR()
 {
-    uint32_t next_ins = pc_ + 4;
-    MemManager::SetGPR(rd_, next_ins);
+    MemManager::SetGPR(rd_, pc_ + 4);
 
     is_jump_ins_ = 1;
     uint32_t target_addr = MemManager::GetGPR(rs1_) + imm_;
     target_addr &= 0xFFFFFFFE;
-    pc_ += target_addr;
+    pc_ = target_addr;
     return true;
 }

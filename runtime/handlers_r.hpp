@@ -3,19 +3,19 @@
 template <class MemManager>
 bool Interpreter<MemManager>::HandleInsOperands_R()
 {
-    if (!curr_ins_->GetRd(&rd_)) {
+    if (!curr_ins_.GetRd(&rd_)) {
         SetError(Err::ErrType::INVALID_INS_FORMAT,
                  "invalid instruction format! couldn't get rd_");
         return false;
     }
 
-    if (!curr_ins_->GetRs2(&rs2_)) {
+    if (!curr_ins_.GetRs2(&rs2_)) {
         SetError(Err::ErrType::INVALID_INS_FORMAT,
                  "invalid instruction format! couldn't get rs2_");
         return false;
     }
 
-    if (!curr_ins_->GetRs1(&rs1_)) {
+    if (!curr_ins_.GetRs1(&rs1_)) {
         SetError(Err::ErrType::INVALID_INS_FORMAT,
                  "invalid instruction format! couldn't get rs1_");
         return false;

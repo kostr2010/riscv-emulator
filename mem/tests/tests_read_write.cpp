@@ -70,7 +70,7 @@ TEST(READ_WRITE_TEST, TEST3)
 TEST(READ_WRITE_TEST, TEST4)
 {
     MemoryManager mem;
-    const uint32_t count = 2;
+    const uint32_t count = 4;
     int32_t write_buffer;
     int32_t read_buffer;
 
@@ -79,6 +79,23 @@ TEST(READ_WRITE_TEST, TEST4)
     mem.Write(USER_SPACE_BEGIN + 137,
               reinterpret_cast<uint8_t*>(&write_buffer), count);
     mem.Read(USER_SPACE_BEGIN + 137, reinterpret_cast<uint8_t*>(&read_buffer),
+             count);
+
+    ASSERT_EQ(memcmp(&read_buffer, &write_buffer, count), 0);
+}
+
+TEST(READ_WRITE_TEST, TEST5)
+{
+    MemoryManager mem;
+    const uint32_t count = 4;
+    int32_t write_buffer;
+    int32_t read_buffer;
+
+    write_buffer = -42424242;
+
+    mem.Write(VM_SPACE_END - 10, reinterpret_cast<uint8_t*>(&write_buffer),
+              count);
+    mem.Read(VM_SPACE_END - 10, reinterpret_cast<uint8_t*>(&read_buffer),
              count);
 
     ASSERT_EQ(memcmp(&read_buffer, &write_buffer, count), 0);

@@ -5,36 +5,52 @@
 
 std::string Ins::ToString() const
 {
-
     static std::map<InsMnemonic, std::string> mnm_to_string = {
 #define OPLIST(ins, format, opcode, is_funct7, funct7, is_funct3, funct3,     \
-               mnemonic)                                                      \
+               is_imm_11_6, imm_11_6, mnemonic)                               \
     { InsMnemonic::ins, #ins },
         INSTRUCTION_LIST(OPLIST)
 #undef OPLIST
     };
 
     std::stringstream s;
+    bool first = true;
 
-    s << "INS: " << mnm_to_string.at(mnm) << "\n";
+    s << mnm_to_string.at(mnm) << " ";
 
     int32_t imm = 0;
     if (GetImm(&imm)) {
-        s << "IMM: " << imm << "\n";
+        if (!first) {
+            s << ", ";
+        }
+        s << imm;
+        first = false;
     }
 
     uint32_t reg = 0;
     if (GetRs2(&reg)) {
-        s << "RS2: " << reg << "\n";
+        if (!first) {
+            s << ", x";
+        }
+        s << reg << "(rs2)";
+        first = false;
     }
     if (GetRs1(&reg)) {
-        s << "RS1: " << reg << "\n";
+        if (!first) {
+            s << ", x";
+        }
+        s << reg << "(rs1)";
+        first = false;
     }
     if (GetRd(&reg)) {
-        s << "RD:  " << reg << "\n";
+        if (!first) {
+            s << ", x";
+        }
+        s << reg << "(rd)";
+        first = false;
     }
 
-    s << "RAW: " << std::bitset<32>(ins_raw) << "\n";
+    s << "\t# RAW: " << std::bitset<32>(ins_raw) << "\n";
 
     return s.str();
 }

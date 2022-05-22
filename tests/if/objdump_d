@@ -1,0 +1,34 @@
+
+if:     file format elf32-littleriscv
+
+
+Disassembly of section .text:
+
+00010074 <main>:
+   10074:	fe010113          	addi	sp,sp,-32
+   10078:	00812e23          	sw	s0,28(sp)
+   1007c:	02010413          	addi	s0,sp,32
+   10080:	fe042623          	sw	zero,-20(s0)
+   10084:	fe042423          	sw	zero,-24(s0)
+   10088:	0380006f          	jal	zero,100c0 <main+0x4c>
+   1008c:	fec42783          	lw	a5,-20(s0)
+   10090:	0017f793          	andi	a5,a5,1
+   10094:	00078a63          	beq	a5,zero,100a8 <main+0x34>
+   10098:	fe842783          	lw	a5,-24(s0)
+   1009c:	00278793          	addi	a5,a5,2
+   100a0:	fef42423          	sw	a5,-24(s0)
+   100a4:	0100006f          	jal	zero,100b4 <main+0x40>
+   100a8:	fe842783          	lw	a5,-24(s0)
+   100ac:	00178793          	addi	a5,a5,1
+   100b0:	fef42423          	sw	a5,-24(s0)
+   100b4:	fec42783          	lw	a5,-20(s0)
+   100b8:	00178793          	addi	a5,a5,1
+   100bc:	fef42623          	sw	a5,-20(s0)
+   100c0:	fe842703          	lw	a4,-24(s0)
+   100c4:	00900793          	addi	a5,zero,9
+   100c8:	fce7d2e3          	bge	a5,a4,1008c <main+0x18>
+   100cc:	fec42783          	lw	a5,-20(s0)
+   100d0:	00078513          	addi	a0,a5,0
+   100d4:	01c12403          	lw	s0,28(sp)
+   100d8:	02010113          	addi	sp,sp,32
+   100dc:	00008067          	jalr	zero,0(ra)
