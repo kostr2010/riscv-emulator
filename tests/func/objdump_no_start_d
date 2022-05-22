@@ -1,0 +1,48 @@
+
+func_no_start:     file format elf32-littleriscv
+
+
+Disassembly of section .text:
+
+00010074 <func>:
+   10074:	fe010113          	addi	sp,sp,-32
+   10078:	00112e23          	sw	ra,28(sp)
+   1007c:	00812c23          	sw	s0,24(sp)
+   10080:	02010413          	addi	s0,sp,32
+   10084:	fea42623          	sw	a0,-20(s0)
+   10088:	fec42583          	lw	a1,-20(s0)
+   1008c:	fec42503          	lw	a0,-20(s0)
+   10090:	054000ef          	jal	ra,100e4 <__mulsi3>
+   10094:	00050793          	addi	a5,a0,0
+   10098:	00078513          	addi	a0,a5,0
+   1009c:	01c12083          	lw	ra,28(sp)
+   100a0:	01812403          	lw	s0,24(sp)
+   100a4:	02010113          	addi	sp,sp,32
+   100a8:	00008067          	jalr	zero,0(ra)
+
+000100ac <main>:
+   100ac:	fe010113          	addi	sp,sp,-32
+   100b0:	00112e23          	sw	ra,28(sp)
+   100b4:	00812c23          	sw	s0,24(sp)
+   100b8:	02010413          	addi	s0,sp,32
+   100bc:	00a00793          	addi	a5,zero,10
+   100c0:	fef42623          	sw	a5,-20(s0)
+   100c4:	fec42503          	lw	a0,-20(s0)
+   100c8:	fadff0ef          	jal	ra,10074 <func>
+   100cc:	00050793          	addi	a5,a0,0
+   100d0:	00078513          	addi	a0,a5,0
+   100d4:	01c12083          	lw	ra,28(sp)
+   100d8:	01812403          	lw	s0,24(sp)
+   100dc:	02010113          	addi	sp,sp,32
+   100e0:	00008067          	jalr	zero,0(ra)
+
+000100e4 <__mulsi3>:
+   100e4:	00050613          	addi	a2,a0,0
+   100e8:	00000513          	addi	a0,zero,0
+   100ec:	0015f693          	andi	a3,a1,1
+   100f0:	00068463          	beq	a3,zero,100f8 <__mulsi3+0x14>
+   100f4:	00c50533          	add	a0,a0,a2
+   100f8:	0015d593          	srli	a1,a1,0x1
+   100fc:	00161613          	slli	a2,a2,0x1
+   10100:	fe0596e3          	bne	a1,zero,100ec <__mulsi3+0x8>
+   10104:	00008067          	jalr	zero,0(ra)
