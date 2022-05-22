@@ -26,15 +26,6 @@ class Interpreter : public MemManager
         SetHostEndianness();
     }
 
-    // Interpreter(const std::vector<Ins>& program) : program_(program)
-    // {
-    //     SetHostEndianness();
-
-    //     if (!program.empty()) {
-    //         curr_ins_ = &(program_[PCToIndex(pc_)]);
-    //     }
-    // }
-
     uint32_t Run()
     {
         assert(is_elf_loaded);
@@ -46,6 +37,9 @@ class Interpreter : public MemManager
         const auto RA = unsigned(MemManager::GetGPR(RegFile::GPR::X1));
 
         while (pc_ != RA) {
+            std::cout << "RA:" << RA << "\n";
+            std::cout << "pc_:" << pc_ << "\n";
+
             FetchIns();
             HandleIns();
             UpdatePc();
@@ -57,29 +51,6 @@ class Interpreter : public MemManager
         }
 
         return MemManager::GetGPR(RegFile::GPR::A0);
-    }
-
-    static uint32_t ReverseBytes32(uint32_t value)
-    {
-        uint8_t b1 = 0, b2 = 0, b3 = 0, b4 = 0;
-        uint8_t mask = 0x000000FF;
-        b4 = (value >> 24) & mask;
-        b3 = (value >> 16) & mask;
-        b2 = (value >> 8) & mask;
-        b1 = (value >> 0) & mask;
-
-        return ((uint32_t)b1 << 24) + ((uint32_t)b2 << 16) +
-               ((uint32_t)b3 << 8) + b4;
-    }
-
-    static uint16_t ReverseBytes16(uint16_t value)
-    {
-        uint8_t b1 = 0, b2 = 0;
-        uint8_t mask = 0x000000FF;
-        b2 = (value >> 8) & mask;
-        b1 = (value >> 0) & mask;
-
-        return ((uint16_t)b1 << 8) + b2;
     }
 
     void RunLoader(ElfFile& elf_file)
@@ -102,9 +73,39 @@ class Interpreter : public MemManager
 
         host_entrypoint_ = elf_file.GetHostEntrypoint();
         elf_start_addr_ = elf_file.GetElfStartAddr();
+        is_elf_big_endian = elf_file.IsElfBigEndian();
+
         InitStack(USER_SPACE_BEGIN + elf_raw[0].second);
 
         MemManager::SetGPR(RegFile::GPR::X1, 0);
+
+        is_elf_loaded = true;
+    }
+
+    void RunLoader(std::vector<Ins> program, bool is_big_endian = true)
+    {
+        is_elf_big_endian = is_big_endian;
+
+        int32_t* inss = (int32_t*)calloc(program.size(), sizeof(int32_t));
+        for (size_t i = 0; i < program.size(); ++i) {
+            inss[i] = program[i].GetInsRaw();
+        }
+
+        MemManager::Write(USER_SPACE_BEGIN, reinterpret_cast<uint8_t*>(inss),
+                          program.size() * 4);
+
+        MemoryManager::MemEntry entry = { USER_SPACE_BEGIN,
+                                          USER_SPACE_BEGIN +
+                                              (uint32_t)program.size() * 4,
+                                          MEM_EXEC | MEM_READ };
+        MemManager::AddMemMapEntry(entry);
+
+        host_entrypoint_ = 0;
+        elf_start_addr_ = 0;
+
+        InitStack(USER_SPACE_BEGIN + program.size() * 4);
+
+        MemManager::SetGPR(RegFile::GPR::X1, 4 * program.size());
 
         is_elf_loaded = true;
     }
@@ -120,7 +121,8 @@ class Interpreter : public MemManager
     bool HandleInsOperands_J();
     bool HandleInsOperands_NOP();
 
-#define OPLIST(ins, fmt, opcode, is_funct7, funct7, is_funct3, funct3, mnm)   \
+#define OPLIST(ins, fmt, opcode, is_funct7, funct7, is_funct3, funct3,        \
+               is_imm_11_6, imm_11_6, mnm)                                    \
     bool HandleIns_##ins();
     INSTRUCTION_LIST(OPLIST)
 #undef OPLIST
@@ -152,11 +154,6 @@ class Interpreter : public MemManager
         MemManager::SetGPR(RegFile::GPR::SP, stack_root);
     }
 
-    // inline size_t PCToIndex(const uint32_t pc) const
-    // {
-    //     return pc / 4;
-    // }
-
     inline void SetError(const Err::ErrType& err_type, const std::string& msg)
     {
         err_ = Err(err_type, msg, pc_, curr_ins_);
@@ -174,7 +171,29 @@ class Interpreter : public MemManager
         is_host_big_endian = (p[0] == 1) ? false : true;
     }
 
-    // interpreter_state_
+    static uint32_t ReverseBytes32(uint32_t value)
+    {
+        uint8_t b1 = 0, b2 = 0, b3 = 0, b4 = 0;
+        uint8_t mask = 0x000000FF;
+        b4 = (value >> 24) & mask;
+        b3 = (value >> 16) & mask;
+        b2 = (value >> 8) & mask;
+        b1 = (value >> 0) & mask;
+
+        return ((uint32_t)b1 << 24) + ((uint32_t)b2 << 16) +
+               ((uint32_t)b3 << 8) + b4;
+    }
+
+    static uint16_t ReverseBytes16(uint16_t value)
+    {
+        uint8_t b1 = 0, b2 = 0;
+        uint8_t mask = 0x000000FF;
+        b2 = (value >> 8) & mask;
+        b1 = (value >> 0) & mask;
+
+        return ((uint16_t)b1 << 8) + b2;
+    }
+
     bool is_host_big_endian = true;
     bool is_elf_big_endian = true;
     bool is_elf_loaded = false;
@@ -182,7 +201,7 @@ class Interpreter : public MemManager
     uint32_t pc_{};
     uint32_t host_entrypoint_{};
     uint32_t elf_start_addr_{};
-    // std::vector<Ins> program_ = {};
+
     Ins curr_ins_{};
     int32_t imm_{};
     uint32_t rd_{};

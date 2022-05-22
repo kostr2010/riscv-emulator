@@ -33,6 +33,8 @@ class ElfFile
 
         host_entrypoint_ = header_.e_entry;
 
+        is_elf_big_endian = header_.e_ident[EI_DATA] == ELFDATA2MSB ? 1 : 0;
+
         // std::cout << "entry count " << header_.e_phnum << "\n";
 
         // std::cout << "Elf header sizeof " << sizeof(Elf32_Ehdr) << "\n";
@@ -67,6 +69,11 @@ class ElfFile
     uint32_t GetElfStartAddr() const
     {
         return elf_start_addr_;
+    }
+
+    bool IsElfBigEndian() const
+    {
+        return is_elf_big_endian;
     }
 
     void DumpExecSection(uint32_t num) const
@@ -129,6 +136,7 @@ class ElfFile
 
     uint32_t host_entrypoint_ = 0;
     uint32_t elf_start_addr_ = 0;
+    bool is_elf_big_endian = 0;
 
     // first - data, second - size of data in bytes
     std::vector<std::pair<uint32_t*, uint32_t> > exec_sections_raw_;

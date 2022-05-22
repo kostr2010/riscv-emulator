@@ -1,9 +1,0 @@
-# CONTENTS
-
-## `tests/`
-
-tests folder. run `make tests_modules` to build these tests
-
-## `mem.*`
-
-memory module implementation

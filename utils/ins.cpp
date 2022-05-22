@@ -5,12 +5,9 @@
 
 std::string Ins::ToString() const
 {
-
-    // imm rs2 rs1 rd
-
     static std::map<InsMnemonic, std::string> mnm_to_string = {
 #define OPLIST(ins, format, opcode, is_funct7, funct7, is_funct3, funct3,     \
-               mnemonic)                                                      \
+               is_imm_11_6, imm_11_6, mnemonic)                               \
     { InsMnemonic::ins, #ins },
         INSTRUCTION_LIST(OPLIST)
 #undef OPLIST

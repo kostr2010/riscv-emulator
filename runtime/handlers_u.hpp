@@ -21,7 +21,7 @@ bool Interpreter<MemManager>::HandleInsOperands_U()
 template <class MemManager>
 bool Interpreter<MemManager>::HandleIns_LUI()
 {
-    NOIMPL;
+    MemManager::SetGPR(rd_, imm_);
     return true;
 }
 

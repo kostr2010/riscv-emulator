@@ -21,7 +21,7 @@ bool Interpreter<MemManager>::HandleIns()
 {
     switch (curr_ins_.GetInsMnemonic()) {
 #define OPLIST(ins, format, opcode, is_funct7, funct7, is_funct3, funct3,     \
-               mnemonic)                                                      \
+               is_imm_11_6, imm_11_6, mnemonic)                               \
     case Ins::InsMnemonic::ins:                                               \
         if (!HandleInsOperands_##format()) {                                  \
             return false;                                                     \

@@ -143,10 +143,12 @@ class Ins
         const auto ins_opcode = bits & MASK_OPCODE;
         const auto ins_funct7 = (bits & MASK_FUNCT7) >> 25;
         const auto ins_funct3 = (bits & MASK_FUNCT3) >> 12;
+        const auto ins_imm_11_6 = (bits & 0xFC000000) >> 26;
 
 #define OPLIST(ins, format, opcode, is_funct7, funct7, is_funct3, funct3,     \
-               mnemonic)                                                      \
+               is_imm_11_6, imm_11_6, mnemonic)                               \
     if ((InsOpcode::opcode == ins_opcode) &&                                  \
+        (imm_11_6 == (is_imm_11_6 ? ins_imm_11_6 : imm_11_6)) &&              \
         (funct7 == (is_funct7 ? ins_funct7 : funct7)) &&                      \
         (funct3 == (is_funct3 ? ins_funct3 : funct3))) {                      \
         fmt = InsFormat::format;                                              \

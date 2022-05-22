@@ -8,15 +8,13 @@ project(simulator CXX)
 find_package(GTest REQUIRED)
 include_directories(${GTEST_INCLUDE_DIRS})
 
-add_subdirectory(modules)
 add_subdirectory(utils)
 add_subdirectory(mem)
-# add_subdirectory(runtime)
+add_subdirectory(runtime)
 
 add_executable(emulator emulator.cpp)
 
 target_include_directories(emulator PRIVATE ${PROJECT_SOURCE_DIR})
 
 target_link_libraries(emulator utils)
-target_link_libraries(emulator modules)
 target_link_libraries(emulator mem)
