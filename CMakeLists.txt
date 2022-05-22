@@ -10,7 +10,7 @@ include_directories(${GTEST_INCLUDE_DIRS})
 
 add_subdirectory(utils)
 add_subdirectory(mem)
-add_subdirectory(runtime)
+# add_subdirectory(runtime)
 
 add_executable(emulator emulator.cpp)
 

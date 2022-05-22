@@ -23,42 +23,32 @@ class ElfFile
         int32_t fd = open(path_, O_RDONLY | O_SYNC);
         assert(fd != -1);
         ReadElfHeader(fd);
-        // assert that file is in elf format
         assert(strncmp((char*)header_.e_ident, "\177ELF", 4) == 0);
-        // assert that binary is 32 bit
         assert(header_.e_ident[EI_CLASS] == ELFCLASS32);
 
-        ReadSectionHeaderTable(fd);
-        ReadExecSection(fd);
+        ReadSegmentHeaderTable(fd);
+        ReadSegments(fd);
 
         host_entrypoint_ = header_.e_entry;
+        // std::cout << "entrypoint is " << std::hex << host_entrypoint_
+        //           << std::dec << "\n";
 
         is_elf_big_endian = header_.e_ident[EI_DATA] == ELFDATA2MSB ? 1 : 0;
 
-        // std::cout << "entry count " << header_.e_phnum << "\n";
-
-        // std::cout << "Elf header sizeof " << sizeof(Elf32_Ehdr) << "\n";
-        // std::cout << "Program header sizeof " << sizeof(Elf32_Phdr) << "\n";
-
-        // std::cout << "Entrypoint is " << std::hex << unsigned(entrypoint_)
-        //           << "\n";
-        // std::cout << "exec sections count " << executable_section_count
-        //           << "\n";
-        // std::cout << "e_shstrndx " << header_.e_shstrndx << "\n";
-        exec_sections_raw_.shrink_to_fit();
+        exec_segments_raw_.shrink_to_fit();
     }
 
     ~ElfFile()
     {
-        free(section_header_table_);
-        for (uint32_t i = 0; i < exec_sections_raw_.size(); ++i) {
-            free(exec_sections_raw_[i].first);
+        free(segment_header_table_);
+        for (uint32_t i = 0; i < exec_segments_raw_.size(); ++i) {
+            free(exec_segments_raw_[i].first);
         }
     }
 
     std::vector<std::pair<uint32_t*, uint32_t> >& GetRaw()
     {
-        return exec_sections_raw_;
+        return exec_segments_raw_;
     }
 
     uint32_t GetHostEntrypoint() const
@@ -78,10 +68,10 @@ class ElfFile
 
     void DumpExecSection(uint32_t num) const
     {
-        assert(num < exec_sections_raw_.size());
-        for (uint32_t i = 0; i < exec_sections_raw_[num].second / 4; ++i) {
+        assert(num < exec_segments_raw_.size());
+        for (uint32_t i = 0; i < exec_segments_raw_[num].second / 4; ++i) {
             std::cout << "0x" << std::setfill('0') << std::setw(8) << std::hex
-                      << unsigned(exec_sections_raw_[num].first[i]) << "\n";
+                      << unsigned(exec_segments_raw_[num].first[i]) << "\n";
         }
         std::cout << std::dec;
     }
@@ -93,53 +83,56 @@ class ElfFile
         assert(read(fd, &header_, sizeof(Elf32_Ehdr)) == sizeof(Elf32_Ehdr));
     }
 
-    void ReadSectionHeaderTable(int32_t fd)
+    void ReadSegmentHeaderTable(int32_t fd)
     {
-        section_header_table_ =
-            (Elf32_Shdr*)calloc(header_.e_shnum, header_.e_shentsize);
-        assert(section_header_table_ != nullptr);
-        assert(lseek(fd, header_.e_shoff, SEEK_SET) == header_.e_shoff);
+        segment_header_table_ =
+            (Elf32_Phdr*)calloc(header_.e_phnum, header_.e_phentsize);
+        assert(segment_header_table_ != nullptr);
+        assert(lseek(fd, header_.e_phoff, SEEK_SET) == header_.e_phoff);
 
-        for (uint32_t i = 0; i < header_.e_shnum; ++i) {
-            assert(read(fd, (void*)&section_header_table_[i],
-                        header_.e_shentsize) == header_.e_shentsize);
+        for (uint32_t i = 0; i < header_.e_phnum; ++i) {
+            assert(read(fd, (void*)&segment_header_table_[i],
+                        header_.e_phentsize) == header_.e_phentsize);
         }
     }
 
-    void ReadExecSection(int32_t fd)
+    void ReadSegments(int32_t fd)
     {
         // number of exec sections is not bigger than 4?
-        exec_sections_raw_.reserve(4);
-        uint32_t counter = 0;
-        for (int i = 0; i < header_.e_shnum; ++i) {
-            // 6 = SHF_EXECINSTR + SHF_ALLOC
-            if (!(section_header_table_[i].sh_type == SHT_PROGBITS &&
-                  section_header_table_[i].sh_flags == 6)) {
+        exec_segments_raw_.reserve(4);
+        bool entry_set = 0;
+        for (int i = 0; i < header_.e_phnum; ++i) {
+            if (!(segment_header_table_[i].p_type == PT_LOAD)) {
                 continue;
             }
-            elf_start_addr_ = section_header_table_[i].sh_addr;
+
+            if (!entry_set) {
+                elf_start_addr_ = segment_header_table_[i].p_vaddr;
+                // std::cout << "start addr is " << elf_start_addr_ << "\n";
+                entry_set = 1;
+            }
+
             uint32_t* ptr = (uint32_t*)calloc(
-                section_header_table_[i].sh_size / 4, sizeof(uint32_t));
+                segment_header_table_[i].p_memsz / 4, sizeof(uint32_t));
 
-            assert(lseek(fd, section_header_table_[i].sh_offset, SEEK_SET) ==
-                   section_header_table_[i].sh_offset);
+            assert(lseek(fd, segment_header_table_[i].p_offset, SEEK_SET) ==
+                   segment_header_table_[i].p_offset);
 
-            assert(read(fd, ptr, section_header_table_[i].sh_size) ==
-                   section_header_table_[i].sh_size);
-            uint32_t size = section_header_table_[i].sh_size;
-            exec_sections_raw_.push_back({ ptr, size });
-            counter++;
+            assert(read(fd, ptr, segment_header_table_[i].p_memsz) ==
+                   segment_header_table_[i].p_memsz);
+            uint32_t size = segment_header_table_[i].p_memsz;
+            exec_segments_raw_.push_back({ ptr, size });
         }
     }
     Elf32_Ehdr header_;
-    Elf32_Shdr* section_header_table_;
+    Elf32_Phdr* segment_header_table_;
 
     uint32_t host_entrypoint_ = 0;
     uint32_t elf_start_addr_ = 0;
     bool is_elf_big_endian = 0;
 
     // first - data, second - size of data in bytes
-    std::vector<std::pair<uint32_t*, uint32_t> > exec_sections_raw_;
+    std::vector<std::pair<uint32_t*, uint32_t> > exec_segments_raw_;
 };
 
 #endif

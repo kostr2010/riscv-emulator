@@ -37,8 +37,8 @@ class Interpreter : public MemManager
         const auto RA = unsigned(MemManager::GetGPR(RegFile::GPR::X1));
 
         while (pc_ != RA) {
-            std::cout << "RA:" << RA << "\n";
-            std::cout << "pc_:" << pc_ << "\n";
+            // std::cout << "RA:" << RA << "\n";
+            // std::cout << "pc_:" << pc_ << "\n";
 
             FetchIns();
             HandleIns();
@@ -58,16 +58,17 @@ class Interpreter : public MemManager
         std::vector<std::pair<uint32_t*, uint32_t> >& elf_raw =
             elf_file.GetRaw();
 
-        // now we load only .data section, likely it will be changed later
         std::cout << "elf raw size is " << elf_raw.size() << "\n";
-        std::cout << "section size is " << elf_raw[0].second << "\n";
-        assert(elf_raw.size() == 1);
-        MemManager::Write(USER_SPACE_BEGIN,
-                          reinterpret_cast<uint8_t*>(elf_raw[0].first),
-                          elf_raw[0].second);
 
-        MemoryManager::MemEntry entry = { USER_SPACE_BEGIN,
-                                          USER_SPACE_BEGIN + elf_raw[0].second,
+        uint32_t bound_addr = USER_SPACE_BEGIN;
+        for (size_t i = 0; i < elf_raw.size(); ++i) {
+            MemManager::Write(bound_addr,
+                              reinterpret_cast<uint8_t*>(elf_raw[i].first),
+                              elf_raw[i].second);
+            bound_addr += elf_raw[i].second;
+        }
+
+        MemoryManager::MemEntry entry = { USER_SPACE_BEGIN, bound_addr,
                                           MEM_EXEC | MEM_READ };
         MemManager::AddMemMapEntry(entry);
 
@@ -75,7 +76,7 @@ class Interpreter : public MemManager
         elf_start_addr_ = elf_file.GetElfStartAddr();
         is_elf_big_endian = elf_file.IsElfBigEndian();
 
-        InitStack(USER_SPACE_BEGIN + elf_raw[0].second);
+        InitStack(bound_addr);
 
         MemManager::SetGPR(RegFile::GPR::X1, 0);
 
