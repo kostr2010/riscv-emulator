@@ -2,7 +2,7 @@
 
 ### Compilation
 
-./riscv32-unknown-elf-gcc -nostdlib -static -nostartfiles
+./riscv32-unknown-elf-gcc [-nostdlib] -static -nostartfiles --entry=main
 
 ### Objdump
 
