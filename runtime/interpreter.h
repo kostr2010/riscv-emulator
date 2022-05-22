@@ -35,9 +35,11 @@ class Interpreter : public MemManager
     //     }
     // }
 
-    void Run()
+    uint32_t Run()
     {
         assert(is_elf_loaded);
+
+        std::cout << "entrypoint is " << host_entrypoint_ << "\n";
 
         pc_ = host_entrypoint_;
 
@@ -53,6 +55,8 @@ class Interpreter : public MemManager
             PrintError();
             exit(1);
         }
+
+        return MemManager::GetGPR(RegFile::GPR::A0);
     }
 
     static uint32_t ReverseBytes32(uint32_t value)
@@ -97,6 +101,7 @@ class Interpreter : public MemManager
         MemManager::AddMemMapEntry(entry);
 
         host_entrypoint_ = elf_file.GetHostEntrypoint();
+        elf_start_addr_ = elf_file.GetElfStartAddr();
         InitStack(USER_SPACE_BEGIN + elf_raw[0].second);
 
         MemManager::SetGPR(RegFile::GPR::X1, 0);
@@ -122,13 +127,18 @@ class Interpreter : public MemManager
 
     void FetchIns()
     {
-        uint32_t vaddr = USER_SPACE_BEGIN + pc_ - host_entrypoint_;
+        uint32_t vaddr = USER_SPACE_BEGIN + pc_ - elf_start_addr_;
         uint32_t ins_raw = 0;
         assert(
             MemManager::Read(vaddr, reinterpret_cast<uint8_t*>(&ins_raw), 4));
         curr_ins_ = Ins(ins_raw);
 
-        std::cout << curr_ins_.ToString() << "\n";
+        for (int i = 0; i < 32; ++i) {
+            std::cout << "x" << i << " " << MemManager::GetGPR(i) << "\n";
+        }
+
+        std::cout << std::hex << pc_ << " " << curr_ins_.ToString() << "\n"
+                  << std::flush << std::dec;
     }
 
     void InitStack(uint32_t start_vaddr)
@@ -171,6 +181,7 @@ class Interpreter : public MemManager
 
     uint32_t pc_{};
     uint32_t host_entrypoint_{};
+    uint32_t elf_start_addr_{};
     // std::vector<Ins> program_ = {};
     Ins curr_ins_{};
     int32_t imm_{};

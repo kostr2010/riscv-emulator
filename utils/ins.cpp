@@ -33,23 +33,23 @@ std::string Ins::ToString() const
     uint32_t reg = 0;
     if (GetRs2(&reg)) {
         if (!first) {
-            s << ", ";
+            s << ", x";
         }
-        s << reg;
+        s << reg << "(rs2)";
         first = false;
     }
     if (GetRs1(&reg)) {
         if (!first) {
-            s << ", ";
+            s << ", x";
         }
-        s << reg;
+        s << reg << "(rs1)";
         first = false;
     }
     if (GetRd(&reg)) {
         if (!first) {
-            s << ", ";
+            s << ", x";
         }
-        s << reg;
+        s << reg << "(rd)";
         first = false;
     }
 

@@ -64,6 +64,11 @@ class ElfFile
         return host_entrypoint_;
     }
 
+    uint32_t GetElfStartAddr() const
+    {
+        return elf_start_addr_;
+    }
+
     void DumpExecSection(uint32_t num) const
     {
         assert(num < exec_sections_raw_.size());
@@ -105,6 +110,7 @@ class ElfFile
                   section_header_table_[i].sh_flags == 6)) {
                 continue;
             }
+            elf_start_addr_ = section_header_table_[i].sh_addr;
             uint32_t* ptr = (uint32_t*)calloc(
                 section_header_table_[i].sh_size / 4, sizeof(uint32_t));
 
@@ -122,6 +128,7 @@ class ElfFile
     Elf32_Shdr* section_header_table_;
 
     uint32_t host_entrypoint_ = 0;
+    uint32_t elf_start_addr_ = 0;
 
     // first - data, second - size of data in bytes
     std::vector<std::pair<uint32_t*, uint32_t> > exec_sections_raw_;

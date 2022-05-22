@@ -23,7 +23,9 @@ int main(int argc, char** argv)
 
     interpreter.RunLoader(elf_file);
 
-    interpreter.Run();
+    uint32_t result = interpreter.Run();
+
+    std::cout << "Result: " << result << "\n";
 
     return 0;
 }
