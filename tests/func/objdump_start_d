@@ -1,5 +1,5 @@
 
-func_no_start:     file format elf32-littleriscv
+func_start:     file format elf32-littleriscv
 
 
 Disassembly of section .text:
