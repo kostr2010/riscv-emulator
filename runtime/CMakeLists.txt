@@ -1,17 +1,5 @@
 find_package (Python3 COMPONENTS Interpreter Development)
 
-#add_library(runtime SHARED 
-#            interpreter.cpp
-#            handlers_b.cpp
-#            handlers_i.cpp
-#            handlers_j.cpp
-#            handlers_r.cpp
-#            handlers_s.cpp
-#            handlers_u.cpp
-#            )
-#target_link_libraries(runtime mem utils ${GTEST_LIBRARIES} pthread)
-#target_include_directories(runtime PRIVATE ${PROJECT_SOURCE_DIR})
-
 set(TEST_FOLDER ${CMAKE_CURRENT_SOURCE_DIR}/tests)
 set(GEN_TESTS_PY ${TEST_FOLDER}/gen_tests.py)
 set(TESTS_I_DIR_SRC ${PROJECT_SOURCE_DIR}/third-party/riscv-arch-test/riscv-test-suite/rv32i_m/I/src/)

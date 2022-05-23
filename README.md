@@ -18,3 +18,5 @@ from project's root:
 - `tests/` - folder for emulator's tests. run `make tests` to build these tests
 - `utils/` - folder for miscellneous stuff, like data structures, etc
 - `third-party/` - folder for 3d party dependencies
+- `mem/` - folder for emulator's memory. memory intefrace and memory implementation
+- `runtime/` - folder for interpreter
