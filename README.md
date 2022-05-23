@@ -15,6 +15,7 @@ from project's root:
 `cd build/`
 
 `cmake ..`
+
 `make -j[nproc]`
 
 # STRUCTURE
