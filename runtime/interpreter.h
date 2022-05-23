@@ -2,7 +2,6 @@
 #define INTERPRETER_H_INCLUDED
 
 #include "err.h"
-#include "mem/mem.h"
 #include "mem/memory_interface.h"
 #include "mem/regfile.h"
 #include "utils/elfreader.h"
@@ -37,12 +36,16 @@ class Interpreter : public MemManager
         const auto RA = unsigned(MemManager::GetGPR(RegFile::GPR::X1));
 
         while (pc_ != RA) {
-            std::cout << "RA:" << RA << "\n";
-            std::cout << "pc_:" << pc_ << "\n";
+            // std::cout << "RA:" << RA << "\n";
+            // std::cout << "pc_:" << pc_ << "\n";
 
+            std::cout << "fetching ins\n";
             FetchIns();
+            std::cout << "fetched ins\n";
             HandleIns();
+            std::cout << "handled ins\n";
             UpdatePc();
+            std::cout << "updated pc\n";
         }
 
         if (err_.err_type_ != Err::ErrType::NONE) {
@@ -55,27 +58,21 @@ class Interpreter : public MemManager
 
     void RunLoader(ElfFile& elf_file)
     {
-        std::vector<std::pair<uint32_t*, uint32_t> >& elf_raw =
-            elf_file.GetRaw();
+        uint8_t* elf_raw = elf_file.GetRaw();
+        uint32_t size = elf_file.GetSize();
 
-        // now we load only .data section, likely it will be changed later
-        std::cout << "elf raw size is " << elf_raw.size() << "\n";
-        std::cout << "section size is " << elf_raw[0].second << "\n";
-        assert(elf_raw.size() == 1);
-        MemManager::Write(USER_SPACE_BEGIN,
-                          reinterpret_cast<uint8_t*>(elf_raw[0].first),
-                          elf_raw[0].second);
+        MemManager::Write(USER_SPACE_BEGIN, elf_raw, size);
 
         MemoryManager::MemEntry entry = { USER_SPACE_BEGIN,
-                                          USER_SPACE_BEGIN + elf_raw[0].second,
-                                          MEM_EXEC | MEM_READ };
+                                          USER_SPACE_BEGIN + size,
+                                          MEM_EXEC | MEM_READ | MEM_WRITE };
         MemManager::AddMemMapEntry(entry);
 
         host_entrypoint_ = elf_file.GetHostEntrypoint();
         elf_start_addr_ = elf_file.GetElfStartAddr();
         is_elf_big_endian = elf_file.IsElfBigEndian();
 
-        InitStack(USER_SPACE_BEGIN + elf_raw[0].second);
+        InitStack(USER_SPACE_BEGIN + size);
 
         MemManager::SetGPR(RegFile::GPR::X1, 0);
 
@@ -129,7 +126,7 @@ class Interpreter : public MemManager
 
     void FetchIns()
     {
-        uint32_t vaddr = USER_SPACE_BEGIN + pc_ - elf_start_addr_;
+        uint32_t vaddr = pc_ + USER_SPACE_BEGIN - elf_start_addr_;
         uint32_t ins_raw = 0;
         assert(
             MemManager::Read(vaddr, reinterpret_cast<uint8_t*>(&ins_raw), 4));
@@ -146,7 +143,8 @@ class Interpreter : public MemManager
     void InitStack(uint32_t start_vaddr)
     {
         // subtraction of 3 is needed for 4 byte allignment
-        uint32_t stack_root = VM_SPACE_END - 3;
+        uint32_t stack_root =
+            VM_SPACE_END - 3 - (USER_SPACE_BEGIN - elf_start_addr_);
         MemoryManager::MemEntry entry = { start_vaddr, stack_root,
                                           MEM_WRITE | MEM_READ };
         MemManager::AddMemMapEntry(entry);

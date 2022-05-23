@@ -22,18 +22,10 @@ constexpr uint32_t REGION1_ZONE_END = 0x00500000;
 constexpr uint32_t REGION2_ZONE_END = 0x03f00000;
 constexpr uint32_t PM_SPACE_END = 0x04000000;
 
-constexpr uint32_t KERNEL_SPACE_END = 0x00400000;
-constexpr uint32_t USER_SPACE_BEGIN = 0xFC800000;
-constexpr uint32_t VM_SPACE_END = 0xFFFFFFFF;
-
 constexpr uint32_t N_ENTRIES_PT_OUTER = 15;
 constexpr uint32_t MAX_ENTRIES_PT = 1024;
 
 constexpr uint32_t PT_OUTER_IDX_UPPER_REGION_START = 1010;
-
-constexpr uint32_t N_PAGES = N_ENTRIES_PT_OUTER * MAX_ENTRIES_PT;
-constexpr uint32_t PAGE_SIZE = 4 * 1024;
-constexpr uint32_t TOTAL_RAM = N_PAGES * PAGE_SIZE;
 
 constexpr uint8_t MEM_EXEC = 1;
 constexpr uint8_t MEM_READ = 2;

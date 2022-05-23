@@ -63,6 +63,7 @@ class Ins
         I_ARITHMETIC = 0b0010011,
         I_LOAD = 0b0000011,
         I_JALR = 0b1100111,
+        I_E = 0b1110011,
         S = 0b0100011,
         B = 0b1100011,
         U_LUI = 0b0110111,
@@ -104,6 +105,9 @@ class Ins
         LHU,
         // JALR
         JALR,
+        // E
+        ECALL,
+        EBREAK,
 
         // S
         SB,
@@ -373,6 +377,17 @@ class Ins
     {
         return MakeIns_I(imm, rs1, 0b000, rd, InsOpcode::I_JALR,
                          InsMnemonic::JALR);
+    }
+
+    static inline Ins MakeIns_ECALL()
+    {
+        return MakeIns_I(0x0, 0, 0b000, 0, InsOpcode::I_E, InsMnemonic::ECALL);
+    }
+
+    static inline Ins MakeIns_EBREAK()
+    {
+        return MakeIns_I(0x1, 0, 0b000, 0, InsOpcode::I_E,
+                         InsMnemonic::EBREAK);
     }
 
     static inline Ins MakeIns_SB(int32_t imm = 0, uint32_t rs2 = 0,

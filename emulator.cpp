@@ -15,11 +15,8 @@ int main(int argc, char** argv)
 
     ElfFile elf_file(argv[1]);
 
-    for (uint32_t i = 0; i < 1; ++i) {
-        std::cout << "Section " << i << "\n";
-        elf_file.DumpExecSection(i);
-        std::cout << "\n";
-    }
+    elf_file.Dump();
+    std::cout << "\n";
 
     interpreter.RunLoader(elf_file);
 
