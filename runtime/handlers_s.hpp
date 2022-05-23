@@ -28,6 +28,7 @@ template <class MemManager>
 bool Interpreter<MemManager>::HandleIns_SB()
 {
     uint32_t adr = MemManager::GetGPR(rs1_) + imm_;
+    adr += USER_SPACE_BEGIN - elf_start_addr_;
     uint8_t buf = MemManager::GetGPR(rs2_);
     MemManager::Write(adr, reinterpret_cast<uint8_t*>(&buf), 1);
     return true;
@@ -37,6 +38,7 @@ template <class MemManager>
 bool Interpreter<MemManager>::HandleIns_SH()
 {
     uint32_t adr = MemManager::GetGPR(rs1_) + imm_;
+    adr += USER_SPACE_BEGIN - elf_start_addr_;
     uint16_t buf = MemManager::GetGPR(rs2_);
     if (is_host_big_endian != is_elf_big_endian) {
         buf = ReverseBytes16(buf);
@@ -50,6 +52,7 @@ template <class MemManager>
 bool Interpreter<MemManager>::HandleIns_SW()
 {
     uint32_t adr = static_cast<uint32_t>(MemManager::GetGPR(rs1_)) + imm_;
+    adr += USER_SPACE_BEGIN - elf_start_addr_;
     uint32_t buf = MemManager::GetGPR(rs2_);
     if (is_host_big_endian != is_elf_big_endian) {
         buf = ReverseBytes32(buf);

@@ -5,6 +5,14 @@
 #include <cstdint>
 #include <string>
 
+const extern uint32_t KERNEL_SPACE_END;
+const extern uint32_t USER_SPACE_BEGIN;
+const extern uint32_t VM_SPACE_END;
+
+const extern uint32_t N_PAGES;
+const extern uint32_t PAGE_SIZE;
+const extern uint32_t TOTAL_RAM;
+
 class MemoryInterface
 {
   public:
