@@ -35,4 +35,4 @@ Each of the below mentioned folders contain it's own README with further expplan
 
 # CONTRIBUTION
 
-Almost all work was done via VSCode's Live Share extension, so commits aren't actually representing the authorship of any changes. All work was split +- evenly and averyone's contribution was vital to the project
+Almost all work was done via VSCode's Live Share extension, so commits aren't actually representing the authorship of any changes. All work was split +- evenly and everyone's contribution was vital to the project
