@@ -34,6 +34,10 @@
     _(LHU, I, I_LOAD, false, 0b0000000, true, 0b101, false, 0b000000, "LHU")  \
     _(JALR, I, I_JALR, false, 0b0000000, true, 0b000, false, 0b000000,        \
       "JALR")                                                                 \
+    _(ECALL, I, I_E, false, 0b0000000, false, 0b000, false, 0b000000,         \
+      "ECALL")                                                                \
+    _(EBREAK, I, I_E, false, 0b0000000, false, 0b000, false, 0b000000,        \
+      "EBREAK")                                                               \
     _(SB, S, S, false, 0b0000000, true, 0b000, false, 0b000000, "SB")         \
     _(SH, S, S, false, 0b0000000, true, 0b001, false, 0b000000, "SH")         \
     _(SW, S, S, false, 0b0000000, true, 0b010, false, 0b000000, "SW")         \
