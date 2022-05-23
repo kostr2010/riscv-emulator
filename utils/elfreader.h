@@ -27,15 +27,10 @@ class ElfFile
         assert(strncmp((char*)header_.e_ident, "\177ELF", 4) == 0);
         assert(header_.e_ident[EI_CLASS] == ELFCLASS32);
 
-        lseek(fd, 0, SEEK_SET);
-        size_ = lseek(fd, 0, SEEK_END);
-        errno = 0;
-        raw_file_ = (uint8_t*)mmap(NULL, size_, PROT_READ | PROT_WRITE,
-                                   MAP_SHARED, fd, 0);
-        assert(errno == 0);
+        ReadElf(fd);
 
         host_entrypoint_ = header_.e_entry;
-        elf_start_addr_ = FindStartAddr(fd);
+        elf_start_addr_ = FindHostStartAddr(fd);
 
         is_elf_big_endian = header_.e_ident[EI_DATA] == ELFDATA2MSB ? 1 : 0;
         close(fd);
@@ -90,7 +85,17 @@ class ElfFile
         assert(read(fd, &header_, sizeof(Elf32_Ehdr)) == sizeof(Elf32_Ehdr));
     }
 
-    uint32_t FindStartAddr(int32_t fd)
+    void ReadElf(int32_t fd)
+    {
+        lseek(fd, 0, SEEK_SET);
+        size_ = lseek(fd, 0, SEEK_END);
+        errno = 0;
+        raw_file_ = (uint8_t*)mmap(NULL, size_, PROT_READ | PROT_WRITE,
+                                   MAP_SHARED, fd, 0);
+        assert(errno == 0);
+    }
+
+    uint32_t FindHostStartAddr(int32_t fd)
     {
         Elf32_Phdr* segment_header_table_ =
             (Elf32_Phdr*)calloc(header_.e_phnum, header_.e_phentsize);
@@ -102,13 +107,12 @@ class ElfFile
                         header_.e_phentsize) == header_.e_phentsize);
         }
 
-        uint32_t result = segment_header_table_[1].p_vaddr;
+        uint32_t result = segment_header_table_[1].p_vaddr; // 0 is empty
         free(segment_header_table_);
         return result;
     }
 
     Elf32_Ehdr header_;
-
     uint32_t size_ = 0;
 
     uint32_t host_entrypoint_ = 0;
