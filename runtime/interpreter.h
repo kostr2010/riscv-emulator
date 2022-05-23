@@ -66,7 +66,7 @@ class Interpreter : public MemManager
         host_entrypoint_ = elf_file.GetHostEntrypoint();
         elf_start_addr_ = elf_file.GetElfStartAddr();
         is_elf_big_endian = elf_file.IsElfBigEndian();
-
+        
         InitStack();
 
         MemManager::SetGPR(RegFile::GPR::X1, 0);
