@@ -36,16 +36,9 @@ class Interpreter : public MemManager
         const auto RA = unsigned(MemManager::GetGPR(RegFile::GPR::X1));
 
         while (pc_ != RA) {
-            // std::cout << "RA:" << RA << "\n";
-            // std::cout << "pc_:" << pc_ << "\n";
-
-            std::cout << "fetching ins\n";
             FetchIns();
-            std::cout << "fetched ins\n";
             HandleIns();
-            std::cout << "handled ins\n";
             UpdatePc();
-            std::cout << "updated pc\n";
         }
 
         if (err_.err_type_ != Err::ErrType::NONE) {
@@ -66,7 +59,7 @@ class Interpreter : public MemManager
         host_entrypoint_ = elf_file.GetHostEntrypoint();
         elf_start_addr_ = elf_file.GetElfStartAddr();
         is_elf_big_endian = elf_file.IsElfBigEndian();
-        
+
         InitStack();
 
         MemManager::SetGPR(RegFile::GPR::X1, 0);

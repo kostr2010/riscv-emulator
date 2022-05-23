@@ -15,9 +15,6 @@ int main(int argc, char** argv)
 
     ElfFile elf_file(argv[1]);
 
-    elf_file.Dump();
-    std::cout << "\n";
-
     interpreter.RunLoader(elf_file);
 
     uint32_t result = interpreter.Run();

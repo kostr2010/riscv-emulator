@@ -37,12 +37,6 @@ class ElfFile
         host_entrypoint_ = header_.e_entry;
         elf_start_addr_ = FindStartAddr(fd);
 
-        // std::cout << "entrypoint is " << std::hex << host_entrypoint_
-        //           << std::dec << "\n";
-
-        // std::cout << "start addr is " << std::hex << elf_start_addr_
-        //           << std::dec << "\n";
-
         is_elf_big_endian = header_.e_ident[EI_DATA] == ELFDATA2MSB ? 1 : 0;
         close(fd);
     }
@@ -112,37 +106,6 @@ class ElfFile
         free(segment_header_table_);
         return result;
     }
-
-    // void ReadSegments(int32_t fd)
-    // {
-    //     // number of exec sections is not bigger than 4?
-    //     exec_segments_raw_.reserve(4);
-    //     bool entry_set = 0;
-    //     for (int i = 0; i < header_.e_shnum; ++i) {
-    //         // if (!(segment_header_table_[i].p_type == PT_LOAD)) {
-    //         //     continue;
-    //         // }
-
-    //         if (!entry_set) {
-    //             elf_start_addr_ = segment_header_table_[i].sh_addr;
-    //             // std::cout << "start addr is " << elf_start_addr_ << "\n";
-    //             entry_set = 1;
-    //         }
-
-    //         uint32_t* ptr = (uint32_t*)calloc(
-    //             segment_header_table_[i].sh_size / 4, sizeof(uint32_t));
-    //         assert(ptr != nullptr);
-
-    //         assert(lseek(fd, segment_header_table_[i].sh_offset, SEEK_SET)
-    //         ==
-    //                segment_header_table_[i].sh_offset);
-
-    //         assert(read(fd, ptr, segment_header_table_[i].sh_size) ==
-    //                segment_header_table_[i].sh_size);
-    //         uint32_t size = segment_header_table_[i].sh_size;
-    //         exec_segments_raw_.push_back({ ptr, size });
-    //     }
-    // }
 
     Elf32_Ehdr header_;
 

@@ -158,15 +158,11 @@ bool Interpreter<MemManager>::HandleIns_LW()
     assert(rd_ != RegFile::GPR::ZERO);
     uint32_t adr = MemManager::GetGPR(rs1_) + imm_;
     adr += USER_SPACE_BEGIN - elf_start_addr_;
-    std::cout << "adr is " << adr << "\n";
     uint32_t buf = 0;
     MemManager::Read(adr, reinterpret_cast<uint8_t*>(&buf), 4);
 
     uint32_t tmp = 0;
     MemManager::Read(adr - 4, reinterpret_cast<uint8_t*>(&tmp), 4);
-    std::cout << "tmp is " << tmp << "\n";
-
-    std::cout << "buf before " << buf << "\n";
     if (is_host_big_endian != is_elf_big_endian) {
         buf = ReverseBytes32(buf);
     }
