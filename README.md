@@ -1,7 +1,9 @@
 # INSTALL
 
 `git clone git@github.com:kostr2010/riscv-emulator.git`
+
 `cd riscv-emulator/`
+
 `git submodule update --init --recursive`
 
 # BUILD
@@ -9,7 +11,9 @@
 from project's root:
 
 `mkdir -p build/`
+
 `cd build/`
+
 `cmake ..`
 `make -j[nproc]`
 
