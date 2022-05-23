@@ -47,7 +47,7 @@
             return;                                                           \
         }                                                                     \
         int32_t buf = std::numeric_limits<int32_t>::min();                    \
-        uint32_t addr = static_cast<uint32_t>(USER_SPACE_BEGIN + 0x1000);     \
+        uint32_t addr = static_cast<uint32_t>(0x1000);                        \
         uint32_t reg_buf = rs1 <= 3 ? 11 : rs1 - 1;                           \
         Interpreter<MemoryManager> interpreter{};                             \
         interpreter.RunLoader(                                                \

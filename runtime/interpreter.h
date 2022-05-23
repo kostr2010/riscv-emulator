@@ -63,16 +63,11 @@ class Interpreter : public MemManager
 
         MemManager::Write(USER_SPACE_BEGIN, elf_raw, size);
 
-        MemoryManager::MemEntry entry = { USER_SPACE_BEGIN,
-                                          USER_SPACE_BEGIN + size,
-                                          MEM_EXEC | MEM_READ | MEM_WRITE };
-        MemManager::AddMemMapEntry(entry);
-
         host_entrypoint_ = elf_file.GetHostEntrypoint();
         elf_start_addr_ = elf_file.GetElfStartAddr();
         is_elf_big_endian = elf_file.IsElfBigEndian();
-
-        InitStack(USER_SPACE_BEGIN + size);
+        
+        InitStack();
 
         MemManager::SetGPR(RegFile::GPR::X1, 0);
 
@@ -91,16 +86,10 @@ class Interpreter : public MemManager
         MemManager::Write(USER_SPACE_BEGIN, reinterpret_cast<uint8_t*>(inss),
                           program.size() * 4);
 
-        MemoryManager::MemEntry entry = { USER_SPACE_BEGIN,
-                                          USER_SPACE_BEGIN +
-                                              (uint32_t)program.size() * 4,
-                                          MEM_EXEC | MEM_READ };
-        MemManager::AddMemMapEntry(entry);
-
         host_entrypoint_ = 0;
         elf_start_addr_ = 0;
 
-        InitStack(USER_SPACE_BEGIN + program.size() * 4);
+        InitStack();
 
         MemManager::SetGPR(RegFile::GPR::X1, 4 * program.size());
 
@@ -140,14 +129,11 @@ class Interpreter : public MemManager
                   << std::flush << std::dec;
     }
 
-    void InitStack(uint32_t start_vaddr)
+    void InitStack()
     {
         // subtraction of 3 is needed for 4 byte allignment
         uint32_t stack_root =
             VM_SPACE_END - 3 - (USER_SPACE_BEGIN - elf_start_addr_);
-        MemoryManager::MemEntry entry = { start_vaddr, stack_root,
-                                          MEM_WRITE | MEM_READ };
-        MemManager::AddMemMapEntry(entry);
 
         MemManager::SetGPR(RegFile::GPR::SP, stack_root);
     }

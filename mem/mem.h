@@ -132,11 +132,7 @@ class MemoryManager : public MemoryInterface
         assert(buf != nullptr);
         assert(vaddr >= USER_SPACE_BEGIN && vaddr + count < VM_SPACE_END);
 
-        for (const auto& item : mem_map_) {
-            if (vaddr >= item.vaddr_begin_ && vaddr < item.vaddr_end_) {
-                assert(item.flags_ & MEM_READ);
-            }
-        }
+        // TODO: add PMP
 
         Uint32_t_Ptr ptr(vaddr);
         uint32_t buf_offset = 0;
@@ -161,11 +157,7 @@ class MemoryManager : public MemoryInterface
         assert(buf != nullptr);
         assert(vaddr >= USER_SPACE_BEGIN && vaddr + count < VM_SPACE_END);
 
-        for (const auto& item : mem_map_) {
-            if (vaddr >= item.vaddr_begin_ && vaddr < item.vaddr_end_) {
-                assert(item.flags_ & MEM_WRITE);
-            }
-        }
+        // TODO: add PMP
 
         Uint32_t_Ptr ptr(vaddr);
         uint32_t buf_offset = 0;
@@ -253,20 +245,6 @@ class MemoryManager : public MemoryInterface
         return mem_;
     }
 
-    // not the most optimal solution
-    class MemEntry
-    {
-      public:
-        uint32_t vaddr_begin_ = 0;
-        uint32_t vaddr_end_ = 0;
-        uint8_t flags_ = 0;
-    };
-
-    void AddMemMapEntry(const MemEntry& entry)
-    {
-        mem_map_.push_back(entry);
-    }
-
   private:
     void InitPageTable()
     {
@@ -313,9 +291,6 @@ class MemoryManager : public MemoryInterface
     PageTableOuter pt_;
     uint8_t* mem_ = nullptr;
     RegFile regfile_ = {};
-
-    // not the most optimal solution
-    std::vector<MemEntry> mem_map_;
 };
 
 #endif
