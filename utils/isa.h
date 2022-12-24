@@ -1,4 +1,12 @@
 #define INSTRUCTION_LIST(_)                                                   \
+    _(MUL, M, M, true, 0b0000001, true, 0b000, false, 0b000000, "MUL")        \
+    _(MULH, M, M, true, 0b0000001, true, 0b001, false, 0b000000, "MULH")        \
+    _(MULHSU, M, M, true, 0b0000001, true, 0b010, false, 0b000000, "MULHSU")        \
+    _(MULHU, M, M, true, 0b0000001, true, 0b011, false, 0b000000, "MULHU")        \
+    _(DIV, M, M, true, 0b0000001, true, 0b100, false, 0b000000, "DIV")        \
+    _(DIVU, M, M, true, 0b0000001, true, 0b101, false, 0b000000, "DIVU")        \
+    _(REM, M, M, true, 0b0000001, true, 0b110, false, 0b000000, "REM")        \
+    _(REMU, M, M, true, 0b0000001, true, 0b111, false, 0b000000, "REMU")        \
     _(ADD, R, R, true, 0b0000000, true, 0b000, false, 0b000000, "ADD")        \
     _(SUB, R, R, true, 0b0100000, true, 0b000, false, 0b000000, "SUB")        \
     _(SLL, R, R, true, 0b0000000, true, 0b001, false, 0b000000, "SLL")        \

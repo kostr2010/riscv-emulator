@@ -60,6 +60,7 @@ bool Ins::GetRs1(uint32_t* rs1) const
     assert(rs1 != nullptr);
 
     switch (fmt) {
+    case InsFormat::M:
     case InsFormat::R:
     case InsFormat::I:
     case InsFormat::S:
@@ -76,6 +77,7 @@ bool Ins::GetRs2(uint32_t* rs2) const
     assert(rs2 != nullptr);
 
     switch (fmt) {
+    case InsFormat::M:
     case InsFormat::R:
     case InsFormat::S:
     case InsFormat::B:
@@ -91,6 +93,7 @@ bool Ins::GetRd(uint32_t* rd) const
     assert(rd != nullptr);
 
     switch (fmt) {
+    case InsFormat::M:
     case InsFormat::R:
     case InsFormat::I:
     case InsFormat::U:
@@ -109,6 +112,7 @@ bool Ins::GetImm(int32_t* imm) const
     uint32_t res = 0;
 
     switch (fmt) {
+    case InsFormat::M:
     case InsFormat::R:
         return false;
     case InsFormat::I: {

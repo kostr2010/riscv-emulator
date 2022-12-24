@@ -29,7 +29,7 @@ class Interpreter : public MemManager
     {
         assert(is_elf_loaded);
 
-        std::cout << "entrypoint is " << host_entrypoint_ << "\n";
+        // std::cout << "entrypoint is " << host_entrypoint_ << "\n";
 
         pc_ = host_entrypoint_;
 
@@ -92,6 +92,7 @@ class Interpreter : public MemManager
   private:
     void UpdatePc();
     bool HandleIns();
+    bool HandleInsOperands_M();
     bool HandleInsOperands_R();
     bool HandleInsOperands_I();
     bool HandleInsOperands_S();
@@ -114,9 +115,9 @@ class Interpreter : public MemManager
             MemManager::Read(vaddr, reinterpret_cast<uint8_t*>(&ins_raw), 4));
         curr_ins_ = Ins(ins_raw);
 
-        for (int i = 0; i < 32; ++i) {
-            std::cout << "x" << i << " " << MemManager::GetGPR(i) << "\n";
-        }
+        // for (int i = 0; i < 32; ++i) {
+        //     std::cout << "x" << i << " " << MemManager::GetGPR(i) << "\n";
+        // }
 
         std::cout << std::hex << pc_ << " " << curr_ins_.ToString() << "\n"
                   << std::flush << std::dec;
@@ -193,6 +194,7 @@ class Interpreter : public MemManager
 #include "handlers_j.hpp"
 #include "handlers_nop.hpp"
 #include "handlers_r.hpp"
+#include "handlers_m.hpp"
 #include "handlers_s.hpp"
 #include "handlers_u.hpp"
 #include "interpreter.hpp"

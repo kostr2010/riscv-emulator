@@ -56,6 +56,7 @@ endforeach()
 
 set(TESTS_RUNTIME 
     ${TEST_FOLDER}/tests_interpreter.cpp
+    ${TEST_FOLDER}/tests_m.cpp
 )
 
 foreach(INS IN LISTS TESTS_I)

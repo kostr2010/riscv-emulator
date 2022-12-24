@@ -48,6 +48,7 @@ class Ins
 
     enum class InsFormat
     {
+        M,
         R,
         I,
         S,
@@ -59,6 +60,7 @@ class Ins
 
     enum InsOpcode
     {
+        M = 0b0110011,
         R = 0b0110011,
         I_ARITHMETIC = 0b0010011,
         I_LOAD = 0b0000011,
@@ -74,6 +76,16 @@ class Ins
 
     enum class InsMnemonic
     {
+        // M
+        MUL,
+        MULH,
+        MULHSU,
+        MULHU,
+        DIV,
+        DIVU,
+        REM,
+        REMU,
+
         // R
         ADD,
         SUB,
@@ -206,6 +218,54 @@ class Ins
     static inline Ins MakeIns_NOP()
     {
         return Ins();
+    }
+
+    static inline Ins MakeIns_MUL(uint32_t rs2 = 0, uint32_t rs1 = 0,
+                                  uint32_t rd = 0)
+    {
+        return MakeIns_M(rs2, rs1, 0b000, rd, InsMnemonic::MUL);
+    }
+
+    static inline Ins MakeIns_MULH(uint32_t rs2 = 0, uint32_t rs1 = 0,
+                                  uint32_t rd = 0)
+    {
+        return MakeIns_M(rs2, rs1, 0b001, rd, InsMnemonic::MULH);
+    }
+
+    static inline Ins MakeIns_MULHSU(uint32_t rs2 = 0, uint32_t rs1 = 0,
+                                  uint32_t rd = 0)
+    {
+        return MakeIns_M(rs2, rs1, 0b010, rd, InsMnemonic::MULHSU);
+    }
+
+    static inline Ins MakeIns_MULHU(uint32_t rs2 = 0, uint32_t rs1 = 0,
+                                  uint32_t rd = 0)
+    {
+        return MakeIns_M(rs2, rs1, 0b011, rd, InsMnemonic::MULHU);
+    }
+
+    static inline Ins MakeIns_DIV(uint32_t rs2 = 0, uint32_t rs1 = 0,
+                                  uint32_t rd = 0)
+    {
+        return MakeIns_M(rs2, rs1, 0b100, rd, InsMnemonic::DIV);
+    }
+
+    static inline Ins MakeIns_DIVU(uint32_t rs2 = 0, uint32_t rs1 = 0,
+                                  uint32_t rd = 0)
+    {
+        return MakeIns_M(rs2, rs1, 0b101, rd, InsMnemonic::DIVU);
+    }
+
+    static inline Ins MakeIns_REM(uint32_t rs2 = 0, uint32_t rs1 = 0,
+                                  uint32_t rd = 0)
+    {
+        return MakeIns_M(rs2, rs1, 0b110, rd, InsMnemonic::REM);
+    }
+
+    static inline Ins MakeIns_REMU(uint32_t rs2 = 0, uint32_t rs1 = 0,
+                                  uint32_t rd = 0)
+    {
+        return MakeIns_M(rs2, rs1, 0b111, rd, InsMnemonic::REMU);
     }
 
     static inline Ins MakeIns_ADD(uint32_t rs2 = 0, uint32_t rs1 = 0,
@@ -460,6 +520,23 @@ class Ins
     }
 
   private:
+    static Ins MakeIns_M(uint32_t rs2, uint32_t rs1,
+                         uint32_t funct3, uint32_t rd, InsMnemonic mnemonic)
+    {
+        // [funct7][rs2][rs1][funct3][rd][opcode]
+        // [     7][  5][  5][     3][ 5][     7]
+
+        uint32_t ins = 0;
+        ins = InsSetValueMask(ins, InsOpcode::M, MASK_OPCODE, 0);
+        ins = InsSetValueMask(ins, rd, MASK_RD, 7);
+        ins = InsSetValueMask(ins, funct3, MASK_FUNCT3, 12);
+        ins = InsSetValueMask(ins, rs1, MASK_RS1, 15);
+        ins = InsSetValueMask(ins, rs2, MASK_RS2, 20);
+        ins = InsSetValueMask(ins, 0b0000001, MASK_FUNCT7, 25);
+
+        return Ins(ins, InsFormat::M, mnemonic);
+    }
+
     static Ins MakeIns_R(uint32_t funct7, uint32_t rs2, uint32_t rs1,
                          uint32_t funct3, uint32_t rd, InsMnemonic mnemonic)
     {
