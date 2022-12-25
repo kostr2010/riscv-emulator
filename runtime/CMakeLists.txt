@@ -63,6 +63,8 @@ foreach(INS IN LISTS TESTS_I)
     list(APPEND TESTS_RUNTIME ${TESTS_I_DIR_DST}/${INS}.cpp)
 endforeach()
 
+set(GTEST_INCLUDE_DIR third-party/googletest/googletest/include)
+
 add_executable(tests_interpreter ${TESTS_RUNTIME})
-target_link_libraries(tests_interpreter utils mem ${GTEST_LIBRARIES} pthread)
-target_include_directories(tests_interpreter PRIVATE ${PROJECT_SOURCE_DIR})
+target_link_libraries(tests_interpreter utils mem gtest pthread)
+target_include_directories(tests_interpreter PRIVATE ${PROJECT_SOURCE_DIR} SHARED ${GTEST_INCLUDE_DIR})

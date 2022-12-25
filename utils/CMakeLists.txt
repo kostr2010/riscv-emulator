@@ -13,6 +13,8 @@ set(TESTS_INSTRUCTIONS
     ${TEST_FOLDER}/tests_instructions_J.cpp
     )
 
+set(GTEST_INCLUDE_DIR third-party/googletest/googletest/include)
+
 add_executable(tests_utils ${TESTS_INSTRUCTIONS})
-target_link_libraries(tests_utils utils ${GTEST_LIBRARIES} pthread)
-target_include_directories(tests_utils PRIVATE ${PROJECT_SOURCE_DIR})
+target_link_libraries(tests_utils utils gtest pthread)
+target_include_directories(tests_utils PRIVATE ${PROJECT_SOURCE_DIR} SHARED ${GTEST_INCLUDE_DIR}) 

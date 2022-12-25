@@ -5,8 +5,9 @@ set(CMAKE_CXX_STANDARD 20)
 
 project(simulator CXX)
 
-find_package(GTest REQUIRED)
-include_directories(${GTEST_INCLUDE_DIRS})
+# find_package(GTest REQUIRED)
+# include_directories(${GTEST_INCLUDE_DIRS})
+add_subdirectory(third-party/googletest)
 
 add_subdirectory(utils)
 add_subdirectory(mem)

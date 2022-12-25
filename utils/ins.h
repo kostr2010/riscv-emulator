@@ -146,13 +146,15 @@ class Ins
     };
 
     Ins() : ins_raw(0), fmt(InsFormat::NOP), mnm(InsMnemonic::NOP)
-    {}
+    {
+    }
     ~Ins() = default;
 
     Ins(const uint32_t bits, const InsFormat format,
         const InsMnemonic mnemonic)
         : ins_raw(bits), fmt(format), mnm(mnemonic)
-    {}
+    {
+    }
 
     Ins(const uint32_t bits) : ins_raw(bits)
     {
@@ -227,19 +229,19 @@ class Ins
     }
 
     static inline Ins MakeIns_MULH(uint32_t rs2 = 0, uint32_t rs1 = 0,
-                                  uint32_t rd = 0)
+                                   uint32_t rd = 0)
     {
         return MakeIns_M(rs2, rs1, 0b001, rd, InsMnemonic::MULH);
     }
 
     static inline Ins MakeIns_MULHSU(uint32_t rs2 = 0, uint32_t rs1 = 0,
-                                  uint32_t rd = 0)
+                                     uint32_t rd = 0)
     {
         return MakeIns_M(rs2, rs1, 0b010, rd, InsMnemonic::MULHSU);
     }
 
     static inline Ins MakeIns_MULHU(uint32_t rs2 = 0, uint32_t rs1 = 0,
-                                  uint32_t rd = 0)
+                                    uint32_t rd = 0)
     {
         return MakeIns_M(rs2, rs1, 0b011, rd, InsMnemonic::MULHU);
     }
@@ -251,7 +253,7 @@ class Ins
     }
 
     static inline Ins MakeIns_DIVU(uint32_t rs2 = 0, uint32_t rs1 = 0,
-                                  uint32_t rd = 0)
+                                   uint32_t rd = 0)
     {
         return MakeIns_M(rs2, rs1, 0b101, rd, InsMnemonic::DIVU);
     }
@@ -263,7 +265,7 @@ class Ins
     }
 
     static inline Ins MakeIns_REMU(uint32_t rs2 = 0, uint32_t rs1 = 0,
-                                  uint32_t rd = 0)
+                                   uint32_t rd = 0)
     {
         return MakeIns_M(rs2, rs1, 0b111, rd, InsMnemonic::REMU);
     }
@@ -520,8 +522,8 @@ class Ins
     }
 
   private:
-    static Ins MakeIns_M(uint32_t rs2, uint32_t rs1,
-                         uint32_t funct3, uint32_t rd, InsMnemonic mnemonic)
+    static Ins MakeIns_M(uint32_t rs2, uint32_t rs1, uint32_t funct3,
+                         uint32_t rd, InsMnemonic mnemonic)
     {
         // [funct7][rs2][rs1][funct3][rd][opcode]
         // [     7][  5][  5][     3][ 5][     7]

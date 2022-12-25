@@ -36,7 +36,7 @@ bool Interpreter<MemManager>::HandleIns_MUL()
 template <class MemManager>
 bool Interpreter<MemManager>::HandleIns_MULH()
 {
-    const int64_t result = MemManager::GetGPR(rs1_) * MemManager::GetGPR(rs2_);
+    const uint64_t result = static_cast<uint64_t>(0x00000000FFFFFFFF &  MemManager::GetGPR(rs1_)) * static_cast<uint64_t>(0x00000000FFFFFFFF &  MemManager::GetGPR(rs2_));
     static constexpr uint64_t MASK_H = 0xFFFFFFFF00000000;
     const int32_t res = ((result & MASK_H) >> 32);
     MemManager::SetGPR(rd_, res);
@@ -71,6 +71,10 @@ bool Interpreter<MemManager>::HandleIns_MULHU()
 template <class MemManager>
 bool Interpreter<MemManager>::HandleIns_DIV()
 {
+    if (MemManager::GetGPR(rs2_) == 0) {
+        std::cout << "div by 0!\n";
+        return true;
+    }
     const int32_t result = MemManager::GetGPR(rs1_) / MemManager::GetGPR(rs2_);
     MemManager::SetGPR(rd_, result);
 
@@ -80,7 +84,11 @@ bool Interpreter<MemManager>::HandleIns_DIV()
 template <class MemManager>
 bool Interpreter<MemManager>::HandleIns_DIVU()
 {
-    const uint32_t result = static_cast<uint32_t>(MemManager::GetGPR(rs1_)) * static_cast<uint32_t>(MemManager::GetGPR(rs2_));
+    if (MemManager::GetGPR(rs2_) == 0) {
+        std::cout << "div by 0!\n";
+        return true;
+    }
+    const uint32_t result = static_cast<uint32_t>(MemManager::GetGPR(rs1_)) / static_cast<uint32_t>(MemManager::GetGPR(rs2_));
     MemManager::SetGPR(rd_, result);
 
     return true;
@@ -89,6 +97,10 @@ bool Interpreter<MemManager>::HandleIns_DIVU()
 template <class MemManager>
 bool Interpreter<MemManager>::HandleIns_REM()
 {
+    if (MemManager::GetGPR(rs2_) == 0) {
+        std::cout << "div by 0!\n";
+        return true;
+    }
     const int32_t result = MemManager::GetGPR(rs1_) % MemManager::GetGPR(rs2_);
     MemManager::SetGPR(rd_, result);
 
@@ -98,6 +110,10 @@ bool Interpreter<MemManager>::HandleIns_REM()
 template <class MemManager>
 bool Interpreter<MemManager>::HandleIns_REMU()
 {
+    if (MemManager::GetGPR(rs2_) == 0) {
+        std::cout << "div by 0!\n";
+        return true;
+    }
     const uint32_t result = static_cast<uint32_t>(MemManager::GetGPR(rs1_)) % static_cast<uint32_t>(MemManager::GetGPR(rs2_));
     MemManager::SetGPR(rd_, result);
 

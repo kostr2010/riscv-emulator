@@ -18,6 +18,13 @@ from project's root:
 
 `make -j[nproc]`
 
+# LAUNCH TEST_GEN
+
+```
+<PATH_TO_BUILD_DIR>/test_gen/testgen <N - number of instructions>
+This command randomly generates N instructions and launches their interpretation 
+```
+
 # STRUCTURE
 
 Each of the below mentioned folders contain it's own README with further expplanation

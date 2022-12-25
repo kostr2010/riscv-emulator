@@ -20,7 +20,8 @@ int main(int argc, char** argv)
     generated_program.reserve(inst_count + 1);
     TestGenerator test_gen;
 
-    generated_program.push_back(Ins::MakeIns_ADDI(-STACK_SIZE, RegFile::GPR::SP, RegFile::GPR::SP));
+    generated_program.push_back(
+        Ins::MakeIns_ADDI(-STACK_SIZE, RegFile::GPR::SP, RegFile::GPR::SP));
 
     for (int i = 0; i < 5; ++i) {
         generated_program.push_back(test_gen.GenerateIInst());

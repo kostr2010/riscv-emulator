@@ -4,6 +4,8 @@
 #include <array>
 #include <cassert>
 #include <unordered_map>
+#include <cstdint>
+#include <string>
 
 struct RegFile
 {
